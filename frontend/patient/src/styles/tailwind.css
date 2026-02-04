@@ -1,0 +1,200 @@
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+@layer components {
+  /* Smooth transitions for dark mode */
+  * {
+    @apply transition-colors duration-300;
+  }
+
+  /* Animations modernes */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.8);
+    }
+  }
+
+  /* Classes d'animation réutilisables */
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-slideInDown {
+    animation: slideInDown 0.5s ease-out;
+  }
+
+  .animate-slideInRight {
+    animation: slideInRight 0.5s ease-out;
+  }
+
+  .animate-slideInLeft {
+    animation: slideInLeft 0.5s ease-out;
+  }
+
+  .animate-scaleIn {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background-size: 1000px 100%;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Cards avec meilleur design sombre */
+  .dark .card-modern {
+    @apply bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/30 backdrop-blur-sm;
+  }
+
+  .card-modern {
+    @apply bg-white border border-gray-200;
+  }
+
+  /* Buttons avec animations */
+  .btn-modern {
+    @apply relative overflow-hidden transition-all duration-300;
+  }
+
+  .btn-modern::before {
+    content: '';
+    @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
+  }
+
+  .btn-modern:hover::before {
+    @apply opacity-10;
+  }
+
+  /* Input avec focus glow */
+  .input-modern {
+    @apply bg-transparent border border-gray-300 rounded-lg px-4 py-2 transition-all duration-300;
+  }
+
+  .dark .input-modern {
+    @apply border-slate-600 bg-slate-800/50 focus:border-cyan-500 focus:shadow-[0_0_20px_rgba(6,182,212,0.3)];
+  }
+
+  .input-modern:focus {
+    @apply border-cyan-400 shadow-[0_0_20px_rgba(8,143,178,0.2)] outline-none;
+  }
+
+  /* Badge moderne */
+  .badge-modern {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent;
+  }
+
+  .dark .gradient-text {
+    @apply bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent;
+  }
+
+  /* Backdrop blur modern */
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+
+  .dark .glass-effect {
+    @apply bg-slate-800/50 backdrop-blur-md border border-slate-600/30;
+  }
+}
