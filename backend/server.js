@@ -7,19 +7,12 @@ const cors = require('cors');
 
 const PORT = process.env.PORT || 5000;
 const app=express()
-/*
-app.get('/', (rep, res) => {
-    res.send('hello world');
-});
-app.get('/index', (rep, res) => {
-    res.sendFile(path.join (__dirname,'../frontend/index.html'));
-});*/
 
 app.use(cors({
   origin: 'http://localhost:5173' 
 }));
-// Permet au serveur de comprendre le JSON envoyé par le client
-app.use(express.json());
+
+app.use(express.json()); // Permet au serveur de comprendre le JSON envoyé par le client
 
 // --- Données de l'API (simule une base de données en attendant la connexion à PostgreSQL) ---
 const emergenciesData = [
@@ -34,7 +27,7 @@ const emergenciesData = [
     priority: 'emergency.priority1',
   },
   {
-    level: 2,
+    level: 10,
     icon: 'MessageSquare',
     name: 'emergency.message',
     description: 'Urgences cardiovasculaires et neurologiques stables nécessitant une prise en charge rapide.',
