@@ -28,7 +28,7 @@ export default function DashboardScreen() {
   const quickActions = [
     {
       title: t('action.bookAppointment'),
-      description: 'Planifiez une visite avec nos spécialistes',
+      description: t('action.bookAppointment.desc'),
       icon: Calendar,
       color: 'bg-primary',
       hoverColor: 'hover:bg-primary/90',
@@ -38,7 +38,7 @@ export default function DashboardScreen() {
     },
     {
       title: t('action.myAppointments'),
-      description: 'Consultez et gérez vos réservations',
+      description: t('action.myAppointments.desc'),
       icon: ClipboardList,
       color: 'bg-secondary',
       hoverColor: 'hover:bg-secondary/90',
@@ -48,7 +48,7 @@ export default function DashboardScreen() {
     },
     {
       title: t('action.notifications'),
-      description: 'Consultez vos dernières mises à jour',
+      description: t('action.notifications.desc'),
       icon: Bell,
       color: 'bg-violet-600',
       hoverColor: 'hover:bg-violet-700',
@@ -58,7 +58,7 @@ export default function DashboardScreen() {
     },
     {
       title: t('action.emergencies'),
-      description: 'Accédez à la page des urgences médicales',
+      description: t('action.emergencies.desc'),
       icon: AlertCircle,
       color: 'bg-red-600',
       hoverColor: 'hover:bg-red-700',
@@ -68,7 +68,7 @@ export default function DashboardScreen() {
     },
     {
       title: t('search.hospital'),
-      description: 'Recherchez un service médical',
+      description: t('action.searchHospital.desc'),
       icon: Search,
       color: 'bg-orange-600',
       hoverColor: 'hover:bg-orange-700',
@@ -130,8 +130,8 @@ export default function DashboardScreen() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>Bienvenue, {patientName} ! 👋</h2>
-          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Gérez vos rendez-vous médicaux et restez connecté avec votre équipe soignante.</p>
+          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>{t('dashboard.welcome', { name: patientName })} 👋</h2>
+          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('dashboard.intro')}</p>
         </div>
 
         <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
@@ -145,7 +145,7 @@ export default function DashboardScreen() {
                   <div className="flex-1">
                     <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-1 text-sm`}>{action.title}</h3>
                     <p className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-3 line-clamp-2`}>{action.description}</p>
-                    <Button className={`w-full ${action.color} ${action.hoverColor} text-white text-xs`} size="sm">Accéder</Button>
+                    <Button className={`w-full ${action.color} ${action.hoverColor} text-white text-xs`} size="sm">{t('action.access')}</Button>
                   </div>
                 </div>
               </CardContent>
@@ -158,9 +158,9 @@ export default function DashboardScreen() {
             <CardHeader>
               <CardTitle className={`flex items-center space-x-2 ${isDark ? 'text-white' : ''}`}>
                 <Calendar className="w-5 h-5 text-primary" />
-                <span>Rendez-vous à venir</span>
+                <span>{t('appointments.upcoming')}</span>
               </CardTitle>
-              <CardDescription className={isDark ? 'text-gray-400' : ''}>Vos consultations programmées</CardDescription>
+              <CardDescription className={isDark ? 'text-gray-400' : ''}>{t('appointments.scheduled')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {upcomingAppointments.length > 0 ? (
@@ -183,14 +183,14 @@ export default function DashboardScreen() {
                     </div>
                   ))}
                   <Button variant="outline" className={`w-full ${isDark ? 'border-slate-500 text-primary hover:bg-primary hover:text-white' : 'border-primary text-primary hover:bg-primary hover:text-white'}`} onClick={() => navigate('/appointments')}>
-                    Voir tous les rendez-vous
+                    {t('appointments.viewAll')}
                   </Button>
                 </>
               ) : (
                 <div className={`p-6 text-center rounded-xl ${isDark ? 'bg-slate-600' : 'bg-gray-50'}`}>
-                  <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>Aucun rendez-vous programmé</p>
+                  <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>{t('appointments.none')}</p>
                   <Button className="mt-4 bg-primary hover:bg-primary/90 text-white" onClick={() => navigate('/book-appointment')}>
-                    Prendre un rendez-vous
+                    {t('appointments.book')}
                   </Button>
                 </div>
               )}

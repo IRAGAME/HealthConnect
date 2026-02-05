@@ -7,11 +7,23 @@
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
+    "dev": "cd frontend/patient && npm run dev",
+    "build": "cd frontend/patient && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "pg": "^8.18.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IRAGAME/HealthConnect.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/IRAGAME/HealthConnect/issues"
+  },
+  "homepage": "https://github.com/IRAGAME/HealthConnect#readme"
 }

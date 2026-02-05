@@ -103,7 +103,7 @@ export default function SearchHospitalScreen() {
           <CardContent className="space-y-4">
             <div className="flex gap-3">
               <Input
-                placeholder="Recherchez un service ou un hôpital..."
+                placeholder={t('search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="dark:bg-slate-700 dark:text-white dark:border-gray-600"
@@ -113,7 +113,7 @@ export default function SearchHospitalScreen() {
               />
               <Button onClick={handleSearch} className="bg-cyan-600 hover:bg-cyan-700">
                 <Search className="w-5 h-5 mr-2" />
-                Rechercher
+                {t('search.button')}
               </Button>
             </div>
 

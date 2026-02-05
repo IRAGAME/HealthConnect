@@ -128,12 +128,12 @@ export const HeaderMenu: React.FC<HeaderMenuProps> = ({
               {isDark ? (
                 <>
                   <Sun className="w-4 h-4 mr-2" />
-                  Mode clair
+                  {t('theme.light')}
                 </>
               ) : (
                 <>
                   <Moon className="w-4 h-4 mr-2" />
-                  Mode sombre
+                  {t('theme.dark')}
                 </>
               )}
             </Button>

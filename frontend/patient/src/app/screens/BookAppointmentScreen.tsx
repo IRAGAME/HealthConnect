@@ -10,10 +10,12 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { MedicalDetails } from '@/app/components/MedicalDetails';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export default function BookAppointmentScreen() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
+  const { t } = useLanguage();
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -93,8 +95,8 @@ export default function BookAppointmentScreen() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Prendre Rendez-vous</h1>
-              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Planifiez votre consultation médicale</p>
+              <h1 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('booking.title')}</h1>
+              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('booking.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -107,9 +109,9 @@ export default function BookAppointmentScreen() {
               <CardHeader>
                 <CardTitle className={`flex items-center space-x-2 ${isDark ? 'text-white' : ''}`}>
                   <Stethoscope className="w-5 h-5 text-primary" />
-                  <span>Choisir un service</span>
+                  <span>{t('booking.selectService')}</span>
                 </CardTitle>
-                <CardDescription className={isDark ? 'text-gray-400' : ''}>Sélectionnez la spécialité médicale dont vous avez besoin</CardDescription>
+                <CardDescription className={isDark ? 'text-gray-400' : ''}>{t('booking.selectServiceDesc')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -128,14 +130,14 @@ export default function BookAppointmentScreen() {
                 <CardHeader>
                   <CardTitle className={`flex items-center space-x-2 ${isDark ? 'text-white' : ''}`}>
                     <User className="w-5 h-5 text-primary" />
-                    <span>Choisir un médecin</span>
+                    <span>{t('booking.selectDoctor')}</span>
                   </CardTitle>
-                  <CardDescription className={isDark ? 'text-gray-400' : ''}>Sélectionnez votre praticien préféré</CardDescription>
+                  <CardDescription className={isDark ? 'text-gray-400' : ''}>{t('booking.selectDoctorDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
                     <SelectTrigger className={`${isDark ? 'bg-slate-600 text-white border-slate-500' : 'bg-input-background border-gray-200'}`}>
-                      <SelectValue placeholder="Sélectionnez un médecin" />
+                      <SelectValue placeholder={t('booking.selectDoctor')} />
                     </SelectTrigger>
                     <SelectContent className={isDark ? 'bg-slate-700' : ''}>
                       {doctors[selectedDepartment]?.map((doctor) => (
@@ -152,9 +154,9 @@ export default function BookAppointmentScreen() {
                 <CardHeader>
                   <CardTitle className={`flex items-center space-x-2 ${isDark ? 'text-white' : ''}`}>
                     <CalendarIcon className="w-5 h-5 text-primary" />
-                    <span>Choisir une date</span>
+                    <span>{t('booking.dateTime')}</span>
                   </CardTitle>
-                  <CardDescription className={isDark ? 'text-gray-400' : ''}>Sélectionnez la date de votre rendez-vous</CardDescription>
+                  <CardDescription className={isDark ? 'text-gray-400' : ''}>{t('booking.dateTimeDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} disabled={(date) => date < new Date() || date < new Date('1900-01-01')} className={`rounded-xl border shadow-sm mx-auto ${isDark ? 'bg-slate-600 text-white' : ''}`} />

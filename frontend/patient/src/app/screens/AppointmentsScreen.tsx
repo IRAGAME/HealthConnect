@@ -5,6 +5,8 @@ import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { ArrowLeft, Calendar, Clock, User, MapPin, Phone, Plus } from 'lucide-react';
+import { useLanguage } from '@/app/contexts/LanguageContext';
+import { useTheme } from '@/app/contexts/ThemeContext';
 
 interface Appointment {
   id: string;
@@ -17,6 +19,8 @@ interface Appointment {
 
 export default function AppointmentsScreen() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  const { isDark } = useTheme();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
@@ -163,8 +167,8 @@ export default function AppointmentsScreen() {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Mes Rendez-vous</h1>
-                <p className="text-sm text-gray-600">Consultez et gérez vos réservations</p>
+                <h1 className="text-xl font-bold text-gray-900">{t('nav.appointments')}</h1>
+                <p className="text-sm text-gray-600">{t('action.myAppointments.desc')}</p>
               </div>
             </div>
             
@@ -173,7 +177,7 @@ export default function AppointmentsScreen() {
               className="bg-primary hover:bg-primary/90 text-white shadow-md"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Nouveau
+              {t('appointments.book')}
             </Button>
           </div>
         </div>
