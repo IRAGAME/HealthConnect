@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { AlertCircle, Phone, MessageSquare, Radio, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
@@ -16,71 +17,35 @@ interface EmergencyLevel {
 
 export default function EmergencyScreen() {
   const { t } = useLanguage();
+  const [emergencies, setEmergencies] = useState<EmergencyLevel[]>([]);
 
-  const emergencies: EmergencyLevel[] = [
-    {
-      level: 1,
-      icon: <Phone className="w-8 h-8" />,
-      name: t('emergency.call'),
-      description:
-        'Urgences vitales telles que l\'arrêt cardiaque, la détresse respiratoire sévère, le polytraumatisme grave ou l\'hémorragie massive.',
-      examples: [
-        'Arrêt cardiaque',
-        'Détresse respiratoire sévère',
-        'Polytraumatisme grave',
-        'Hémorragie massive',
-      ],
-      color: 'text-red-600',
-      bgColor: 'bg-red-50 dark:bg-red-950',
-      priority: t('emergency.priority1'),
-    },
-    {
-      level: 2,
-      icon: <MessageSquare className="w-8 h-8" />,
-      name: t('emergency.message'),
-      description:
-        'Urgences cardiovasculaires et neurologiques stables nécessitant une prise en charge rapide.',
-      examples: [
-        'Infarctus du myocarde conscient',
-        'AVC stable',
-        'Occlusion intestinale sans choc',
-        'Crise d\'asthme contrôlée',
-      ],
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-950',
-      priority: t('emergency.priority2'),
-    },
-    {
-      level: 3,
-      icon: <Radio className="w-8 h-8" />,
-      name: t('emergency.beep'),
-      description: 'Urgences infectieuses, digestives ou pédiatriques nécessitant surveillance continue.',
-      examples: [
-        'Fièvre élevée avec suspicion de sepsis',
-        'Déshydratation sévère',
-        'Fracture ouverte',
-        'Pancréatite aiguë modérée',
-      ],
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-950',
-      priority: t('emergency.priority3'),
-    },
-    {
-      level: 4,
-      icon: <AlertTriangle className="w-8 h-8" />,
-      name: t('emergency.alert'),
-      description: 'Urgences psychiatriques ou modérées avec risque d\'aggravation.',
-      examples: [
-        'Hypertension sévère non compliquée',
-        'Convulsions fébriles courtes',
-        'Brûlures modérées',
-        'Agitation psychiatrique sans danger immédiat',
-      ],
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-950',
-      priority: t('emergency.priority4'),
-    },
-  ];
+  // Fonction utilitaire pour convertir le nom de l'icône (string du backend) en composant React
+  const getIconComponent = (iconName: string) => {
+    const props = { className: "w-8 h-8" };
+    switch (iconName?.toLowerCase()) {
+      case 'phone': return <Phone {...props} />;
+      case 'message': return <MessageSquare {...props} />;
+      case 'radio': return <Radio {...props} />;
+      case 'alert': return <AlertTriangle {...props} />;
+      default: return <AlertCircle {...props} />;
+    }
+  };
+
+  useEffect(() => {
+    // Remplacez l'URL ci-dessous par votre endpoint API réel
+    fetch('http://localhost:5000/api/emergencies')
+      .then((res) => res.json())
+      .then((data) => {
+        // On mappe les données pour transformer le string 'iconName' en composant React
+        const formattedData = data.map((item: any) => ({
+          ...item,
+          // Assurez-vous que votre backend renvoie un champ 'iconName' ou adaptez cette clé
+          icon: getIconComponent(item.icon || item.iconName || 'alert') 
+        }));
+        setEmergencies(formattedData);
+      })
+      .catch((err) => console.error("Erreur lors du chargement des urgences:", err));
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-emerald-50 dark:from-slate-900 dark:to-slate-800">
