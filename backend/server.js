@@ -15,61 +15,16 @@ app.use(cors({
 app.use(express.json()); // Permet au serveur de comprendre le JSON envoyé par le client
 
 // --- Données de l'API (simule une base de données en attendant la connexion à PostgreSQL) ---
-const emergenciesData = [
-  {
-    level: 1,
-    icon: 'Phone',
-    name: 'emergency.call',
-    description: "Urgences vitales telles que l'arrêt cardiaque, la détresse respiratoire sévère, le polytraumatisme grave ou l'hémorragie massive.",
-    examples: ['Arrêt cardiaque', 'Détresse respiratoire sévère', 'Polytraumatisme grave', 'Hémorragie massive'],
-    color: 'text-red-600',
-    bgColor: 'bg-red-50 dark:bg-red-950',
-    priority: 'emergency.priority1',
-  },
-  {
-    level: 10,
-    icon: 'MessageSquare',
-    name: 'emergency.message',
-    description: 'Urgences cardiovasculaires et neurologiques stables nécessitant une prise en charge rapide.',
-    examples: ['Infarctus du myocarde conscient', 'AVC stable', 'Occlusion intestinale sans choc', 'Crise d\'asthme contrôlée'],
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50 dark:bg-orange-950',
-    priority: 'emergency.priority2',
-  },
-  {
-    level: 3,
-    icon: 'Radio',
-    name: 'emergency.beep',
-    description: 'Urgences infectieuses, digestives ou pédiatriques nécessitant surveillance continue.',
-    examples: ['Fièvre élevée avec suspicion de sepsis', 'Déshydratation sévère', 'Fracture ouverte', 'Pancréatite aiguë modérée'],
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-50 dark:bg-yellow-950',
-    priority: 'emergency.priority3',
-  },
-  {
-    level: 4,
-    icon: 'AlertTriangle',
-    name: 'emergency.alert',
-    description: "Urgences psychiatriques ou modérées avec risque d'aggravation.",
-    examples: ['Hypertension sévère non compliquée', 'Convulsions fébriles courtes', 'Brûlures modérées', 'Agitation psychiatrique sans danger immédiat'],
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50 dark:bg-blue-950',
-    priority: 'emergency.priority4',
-  },
-];
 
 // --- Route de l'API ---
-app.get('/api/emergencies', (req, res) => {
-  // Plus tard, vous remplacerez `emergenciesData` par une requête à votre base de données
-  // Exemple :
-  // try {
-  //   const result = await pool.query('SELECT * FROM emergencies');
-  //   res.json(result.rows);
-  // } catch (err) {
-  //   console.error(err);
-  //   res.status(500).send("Erreur du serveur");
-  // }
-  res.json(emergenciesData);
+app.get('/api/emergencies', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM emergencies');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erreur du serveur");
+  }
 });
 
 app.listen(PORT, ()=> {
