@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, motdepasse } = req.body;
   try {
-    const user = await db.query('SELECT * FROM users WHERE email = // c:\Users\mugis\Desktop\HealthConnect\backend\controllers\appointmentController.js
+    const user = await db.query('SELECT * FROM users WHERE email = // c:\Users\mugis\Desktop\HealthConnect\backend\controllers\appointmentController.js 
     const db = require('../config/db');
     
     // Créer un rendez-vous (Correspond à BookAppointmentScreen)

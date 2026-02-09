@@ -2,12 +2,12 @@ const pool = require('../config/db');
 
 class Appointment {
   // Créer un rendez-vous
-  static async create(patient_id, docteur_id, date, status = 'En attente') {
+  static async create(patient_id, docteur_id, date, status = 'En attente', medical_condition , medical_description) {
     const query = `
-      INSERT INTO appointments (patient_id, docteur_id, date, status) 
+      INSERT INTO appointments (patient_id, docteur_id, date, status, medical_condition, medical_description) 
       VALUES ($1, , , ) 
       RETURNING *`;
-    const values = [patient_id, docteur_id, date, status];
+    const values = [patient_id, docteur_id, date, status, medical_condition, medical_description];
     
     try {
       const { rows } = await pool.query(query, values);
