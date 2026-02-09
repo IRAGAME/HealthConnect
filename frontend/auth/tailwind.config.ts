@@ -1,0 +1,11 @@
+import tailwindcss from 'tailwindcss';
+import defaultConfig from 'tailwindcss/defaultConfig';
+
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {},
+  },
+  darkMode: 'class',
+  plugins: [],
+};

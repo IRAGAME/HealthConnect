@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Calendar, Bell, ClipboardList, Heart, LogOut, User, AlertCircle, Search, Moon, Sun, Globe } from 'lucide-react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useTheme } from '@/app/contexts/ThemeContext';
+
 
 export default function DashboardScreen() {
   const navigate = useNavigate();
@@ -13,13 +14,31 @@ export default function DashboardScreen() {
   const { isDark, toggleTheme } = useTheme();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
+
   useEffect(() => {
-    const name = localStorage.getItem('patientName') || 'Patient';
-    setPatientName(name);
+    // 1. Vérifier si l'utilisateur est passé via l'URL (depuis l'auth App)
+    const searchParams = new URLSearchParams(window.location.search);
+    const authUserParam = searchParams.get('auth_user');
+
+    if (authUserParam) {
+      try {
+        const parsedUser = JSON.parse(decodeURIComponent(authUserParam));
+        // Sauvegarder dans le localStorage de l'app patient
+        localStorage.setItem('patient_user', JSON.stringify(parsedUser));
+        setPatientName(parsedUser.name);
+      } catch (e) {
+        console.error("Erreur lors de la récupération de l'utilisateur", e);
+      }
+    }else{
+      const name = localStorage.getItem('patientName') || 'Patient';
+      setPatientName(name);
+    }
+
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('patientName');
+    localStorage.removeItem('patient_user');
     navigate('/');
   };
 
@@ -54,8 +73,8 @@ export default function DashboardScreen() {
       hoverColor: 'hover:bg-violet-700',
       iconBg: 'bg-violet-100 dark:bg-violet-900',
       iconColor: 'text-violet-600',
-      onClick: () => navigate('/notifications'),
-    },
+    onClick: () => navigate('/notifications'),
+      },
     {
       title: t('action.emergencies'),
       description: t('action.emergencies.desc'),
@@ -65,7 +84,7 @@ export default function DashboardScreen() {
       iconBg: 'bg-red-100 dark:bg-red-900',
       iconColor: 'text-red-600',
       onClick: () => navigate('/emergency'),
-    },
+      },
     {
       title: t('search.hospital'),
       description: t('action.searchHospital.desc'),
@@ -75,7 +94,7 @@ export default function DashboardScreen() {
       iconBg: 'bg-orange-100 dark:bg-orange-900',
       iconColor: 'text-orange-600',
       onClick: () => navigate('/search-hospital'),
-    },
+      },
   ];
 
   return (
@@ -231,5 +250,5 @@ export default function DashboardScreen() {
         </div>
       </main>
     </div>
-  );
+    );
 }

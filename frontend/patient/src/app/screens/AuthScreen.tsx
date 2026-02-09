@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
@@ -15,6 +15,35 @@ export default function AuthScreen() {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
+
+  useEffect(() => {
+    // Vérifier si une redirection avec utilisateur authentifié est présente dans l'URL
+    const searchParams = new URLSearchParams(window.location.search);
+    const authUserParam = searchParams.get('auth_user');
+
+    if (authUserParam) {
+      localStorage.clear(); // Nettoyer le localStorage avant de rediriger
+      try {
+        const parsedUser = JSON.parse(decodeURIComponent(authUserParam));
+        localStorage.setItem('patient_user', JSON.stringify(parsedUser));
+        localStorage.setItem('patientName', parsedUser.name);
+        navigate('/dashboard');
+        return;
+      } catch (error) {
+        // Afficher un message d'erreur pour aider à débugger
+        console.error("Erreur lors de l'analyse des données de l'utilisateur:", error);
+        alert("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+
+        console.error("Erreur lors de l'analyse de l'utilisateur authentifié", error);
+      }
+    }
+
+    // Vérifier si une session existe déjà
+    const savedUser = localStorage.getItem('patient_user');
+    if (savedUser) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
