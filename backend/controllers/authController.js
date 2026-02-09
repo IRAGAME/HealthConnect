@@ -16,7 +16,7 @@ exports.registerPatient = async (req, res) => {
     // Note: 'telephone' a été retiré de l'INSERT car la colonne n'existe pas dans la table users actuelle
     const newUser = await db.query(
       'INSERT INTO users (nom, email, motdepasse, role) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, role',
-      [nom, email, hashedPassword, 'patient']
+      [nom, email, hashedPassword,telephone]
     );
     res.status(201).json(newUser.rows[0]);
   } catch (err) {

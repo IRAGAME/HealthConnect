@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
+=======
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+>>>>>>> 4fe852a9caf68ee13497b08e6cca0234001dcefb
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Calendar, Bell, ClipboardList, Heart, LogOut, User, AlertCircle, Search, Moon, Sun, Globe } from 'lucide-react';

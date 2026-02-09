@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
