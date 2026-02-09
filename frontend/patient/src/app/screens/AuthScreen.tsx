@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
@@ -16,18 +16,63 @@ export default function AuthScreen() {
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Store user name for dashboard
-    localStorage.setItem('patientName', 'Jean Dupont');
-    navigate('/dashboard');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, motdepasse: loginPassword }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Connexion réussie : on stocke le token et les infos
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('patientName', data.user.nom);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/dashboard');
+      } else {
+        // Erreur (ex: utilisateur non trouvé, mot de passe incorrect)
+        alert(data.message || "Erreur de connexion");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      alert("Impossible de se connecter au serveur. Vérifiez qu'il est bien lancé.");
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Store user name for dashboard
-    localStorage.setItem('patientName', signupName || 'Patient');
-    navigate('/dashboard');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register/patient', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nom: signupName,
+          email: signupEmail,
+          motdepasse: signupPassword,
+          telephone: signupPhone
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Compte créé avec succès ! Veuillez vous connecter.");
+        // On vide les champs pour inviter à la connexion
+        setSignupName('');
+        setSignupEmail('');
+        setSignupPassword('');
+        setSignupPhone('');
+      } else {
+        alert(data.message || "Erreur d'inscription");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      alert("Impossible de s'inscrire.");
+    }
   };
 
   return (
