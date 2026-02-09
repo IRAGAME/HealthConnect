@@ -1,14 +1,14 @@
 const pool = require('../config/db');
 
 class User {
-  // Créer un nouvel utilisateur
-  static async create(nom, email, motdepasse, role) {
+  // Créer un compte patient 
+  static async create(nom, email,telephone,motdepasse) {
     const query = `
-      INSERT INTO users (nom, email, motdepasse, role) 
+      INSERT INTO users (nom, email,telephone,motdepasse) 
       VALUES ($1, $2, $3, $4) 
       RETURNING *`;
-    const values = [nom, email, motdepasse, role];
-    
+    const values = [nom, email, telephone, motdepasse];
+
     try {
       const { rows } = await pool.query(query, values);
       return rows[0];

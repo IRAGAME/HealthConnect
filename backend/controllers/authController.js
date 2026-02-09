@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.registerPatient = async (req, res) => {
-  const { nom, email, motdepasse, telephone } = req.body;
+  const { nom, email,telephone,motdepasse} = req.body;
   try {
     // Vérification si l'email existe déjà
     const userCheck = await db.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -15,7 +15,7 @@ exports.registerPatient = async (req, res) => {
     const hashedPassword = await bcrypt.hash(motdepasse, 10);
     // Note: 'telephone' a été retiré de l'INSERT car la colonne n'existe pas dans la table users actuelle
     const newUser = await db.query(
-      'INSERT INTO users (nom, email, motdepasse, role) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, role',
+      'INSERT INTO users (nom, email,telephone,motdepasse,) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, role',
       [nom, email, hashedPassword,telephone]
     );
     res.status(201).json(newUser.rows[0]);
