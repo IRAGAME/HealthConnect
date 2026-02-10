@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
-=======
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
->>>>>>> 4fe852a9caf68ee13497b08e6cca0234001dcefb
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
@@ -21,7 +16,6 @@ export default function AuthScreen() {
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
 
-<<<<<<< HEAD
   useEffect(() => {
     // Vérifier si une redirection avec utilisateur authentifié est présente dans l'URL
     const searchParams = new URLSearchParams(window.location.search);
@@ -51,10 +45,7 @@ export default function AuthScreen() {
     }
   }, [navigate]);
 
-  const handleLogin = (e: React.FormEvent) => {
-=======
   const handleLogin = async (e: React.FormEvent) => {
->>>>>>> 4fe852a9caf68ee13497b08e6cca0234001dcefb
     e.preventDefault();
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
@@ -77,7 +68,13 @@ export default function AuthScreen() {
       }
     } catch (error) {
       console.error("Erreur:", error);
-      alert("Impossible de se connecter au serveur. Vérifiez qu'il est bien lancé.");
+      // Mode démo de secours si le backend est éteint
+      if (window.confirm("Le serveur (port 5000) est inaccessible. Voulez-vous entrer en mode DÉMO pour tester l'interface ?")) {
+        localStorage.setItem('token', 'demo-token');
+        localStorage.setItem('patientName', 'Patient Test');
+        localStorage.setItem('user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
+        navigate('/dashboard');
+      }
     }
   };
 
