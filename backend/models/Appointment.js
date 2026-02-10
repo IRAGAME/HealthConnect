@@ -5,7 +5,7 @@ class Appointment {
   static async create(patient_id, docteur_id, date, status = 'En attente', medical_condition , medical_description) {
     const query = `
       INSERT INTO appointments (patient_id, docteur_id, date, status, medical_condition, medical_description) 
-      VALUES ($1, , , ) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
       RETURNING *`;
     const values = [patient_id, docteur_id, date, status, medical_condition, medical_description];
     
@@ -24,7 +24,7 @@ class Appointment {
       FROM appointments a
       JOIN docteur d ON a.docteur_id = d.id
       JOIN users u ON d.user_id = u.id
-      WHERE a.patient_id = 
+      WHERE a.patient_id = $1
       ORDER BY a.date DESC`;
     
     try {
@@ -41,7 +41,7 @@ class Appointment {
       SELECT a.*, u.nom as patient_nom
       FROM appointments a
       JOIN users u ON a.patient_id = u.id
-      WHERE a.docteur_id = 
+      WHERE a.docteur_id = $1
       ORDER BY a.date ASC`;
     
     try {
@@ -56,8 +56,8 @@ class Appointment {
   static async updateStatus(id, status) {
     const query = `
       UPDATE appointments 
-      SET status =  
-      WHERE id =  
+      SET status = $1 
+      WHERE id = $2 
       RETURNING *`;
     
     try {

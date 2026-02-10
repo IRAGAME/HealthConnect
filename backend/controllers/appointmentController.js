@@ -8,7 +8,7 @@ exports.createAppointment = async (req, res) => {
     const newAppointment = await db.query(
       `INSERT INTO appointments 
       (patient_id, docteur_id, date, status, medical_condition, medical_description) 
-      VALUES ($1, , , 'En attente', , ) 
+      VALUES ($1, $2, $3, 'En attente', $4, $5) 
       RETURNING *`,
       [patient_id, docteur_id, date, medical_condition, medical_description]
     );
@@ -16,7 +16,7 @@ exports.createAppointment = async (req, res) => {
     // Créer une notification automatique (Fonctionnalité 1 du frontend)
     await db.query(
       `INSERT INTO notifications (user_id, type, message, sent_at, status)
-       VALUES (, 'Rendez-vous', 'Votre rendez-vous a été créé avec succès.', NOW(), 'non_lu')`,
+       VALUES ($1, 'Rendez-vous', 'Votre rendez-vous a été créé avec succès.', NOW(), 'non_lu')`,
       [patient_id]
     );
 
@@ -35,7 +35,7 @@ exports.getPatientAppointments = async (req, res) => {
        FROM appointments a
        JOIN docteur doc ON a.docteur_id = doc.id
        JOIN users u ON doc.user_id = u.id
-       WHERE a.patient_id = 
+       WHERE a.patient_id = $1
        ORDER BY a.date DESC`,
       [patientId]
     );
