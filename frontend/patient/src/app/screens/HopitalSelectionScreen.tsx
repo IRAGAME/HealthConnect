@@ -132,13 +132,13 @@ export default function HopitalSelectionScreen() {
               <Stethoscope className="w-8 h-8 text-teal-300" />
             </div>
             <h1 className="text-5xl font-bold text-white">Sélectionner un Hôpital</h1>
-          </div>0/10 border border-red-400 rounded-lg p-4 mb-6 backdrop-blur-sm">
-            <p className="text-red-10 text-lg">Choisissez l'établissement où vous souhaitez prendre rendez-vous</p>
+          </div>
+          <p className="text-blue-100 text-lg">Choisissez l'établissement où vous souhaitez prendre rendez-vous</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">{error}</p>
+          <div className="bg-red-500/10 border border-red-400 rounded-lg p-4 mb-6 backdrop-blur-sm">
+            <p className="text-red-100">{error}</p>
           </div>
         )}
 
@@ -210,24 +210,20 @@ export default function HopitalSelectionScreen() {
                               selectedHopital === hopital.id
                                 ? 'text-slate-600'
                                 : 'text-blue-200'
-                           12 text-center">
-          <Button
-            onClick={() => {
-              if (selectedHopital) {
-                handleSelectHopital(selectedHopital);
-              } else {
-                setError('Veuillez sélectionner un hôpital');
-              }
-            }}
-            disabled={!selectedHopital}
-            className={`w-full max-w-sm px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
-              selectedHopital
-                ? 'bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white shadow-lg shadow-teal-500/50 hover:shadow-xl hover:shadow-teal-500/70'
-                : 'bg-white/20 text-white/50 cursor-not-allowed'
-            }`}
-            size="lg"
-          >
-            {selectedHopital ? '✓ Continuer vers le Dashboard' : 'Sélectionnez un hôpital'}}
+                            }`}>
+                              SPÉCIALITÉS
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {hopital.specialites.map((spec, idx) => (
+                                <span 
+                                  key={idx}
+                                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                                    selectedHopital === hopital.id
+                                      ? 'bg-teal-200 text-teal-800'
+                                      : 'bg-white/20 text-teal-100 border border-white/30'
+                                  }`}
+                                >
+                                  {spec}
                                 </span>
                               ))}
                             </div>
@@ -252,19 +248,23 @@ export default function HopitalSelectionScreen() {
           <Button
             onClick={() => {
               if (selectedHopital) {
+                handleSelec12 text-center">
+          <Button
+            onClick={() => {
+              if (selectedHopital) {
                 handleSelectHopital(selectedHopital);
               } else {
                 setError('Veuillez sélectionner un hôpital');
               }
             }}
             disabled={!selectedHopital}
-            className="w-full max-w-xs bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300"
+            className={`w-full max-w-sm px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
+              selectedHopital
+                ? 'bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white shadow-lg shadow-teal-500/50 hover:shadow-xl hover:shadow-teal-500/70'
+                : 'bg-white/20 text-white/50 cursor-not-allowed'
+            }`}
             size="lg"
           >
-            Continuer vers le Dashboard
-          </Button>
-        </div>
-      </div>
-    </div>
+            {selectedHopital ? '✓ Continuer vers le Dashboard' : 'Sélectionnez un hôpital'}
   );
 }
