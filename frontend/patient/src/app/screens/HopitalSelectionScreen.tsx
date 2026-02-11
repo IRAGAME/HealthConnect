@@ -244,11 +244,7 @@ export default function HopitalSelectionScreen() {
         </div>
 
         {/* Bouton continuer */}
-        <div className="mt-8 text-center">
-          <Button
-            onClick={() => {
-              if (selectedHopital) {
-                handleSelec12 text-center">
+        <div className="mt-12 text-center">
           <Button
             onClick={() => {
               if (selectedHopital) {
@@ -266,5 +262,9 @@ export default function HopitalSelectionScreen() {
             size="lg"
           >
             {selectedHopital ? '✓ Continuer vers le Dashboard' : 'Sélectionnez un hôpital'}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
