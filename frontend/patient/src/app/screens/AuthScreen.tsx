@@ -27,7 +27,7 @@ export default function AuthScreen() {
         const parsedUser = JSON.parse(decodeURIComponent(authUserParam));
         localStorage.setItem('patient_user', JSON.stringify(parsedUser));
         localStorage.setItem('patientName', parsedUser.name);
-        navigate('/dashboard');
+        navigate('/select-hopital');
         return;
       } catch (error) {
         // Afficher un message d'erreur pour aider à débugger
@@ -41,7 +41,7 @@ export default function AuthScreen() {
     // Vérifier si une session existe déjà
     const savedUser = localStorage.getItem('patient_user');
     if (savedUser) {
-      navigate('/dashboard');
+      navigate('/select-hopital');
     }
   }, [navigate]);
 
@@ -61,7 +61,7 @@ export default function AuthScreen() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('patientName', data.user.nom);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/dashboard');
+        navigate('/select-hopital');
       } else {
         // Erreur (ex: utilisateur non trouvé, mot de passe incorrect)
         alert(data.message || "Erreur de connexion");
@@ -73,7 +73,7 @@ export default function AuthScreen() {
         localStorage.setItem('token', 'demo-token');
         localStorage.setItem('patientName', 'Patient Test');
         localStorage.setItem('user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
-        navigate('/dashboard');
+        navigate('/select-hopital');
       }
     }
   };

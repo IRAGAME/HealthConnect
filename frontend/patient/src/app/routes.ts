@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import AuthScreen from '@/app/screens/AuthScreen';
+import HopitalSelectionScreen from '@/app/screens/HopitalSelectionScreen';
 import DashboardScreen from '@/app/screens/DashboardScreen';
 import BookAppointmentScreen from '@/app/screens/BookAppointmentScreen';
 import AppointmentsScreen from '@/app/screens/AppointmentsScreen';
@@ -11,6 +12,10 @@ export const router = createBrowserRouter([
   {
     path: '/',
     Component: AuthScreen,
+  },
+  {
+    path: '/select-hopital',
+    Component: HopitalSelectionScreen,
   },
   {
     path: '/dashboard',
