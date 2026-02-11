@@ -61,6 +61,8 @@ export default function AuthScreen() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('patientName', data.user.nom);
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('patient_user', JSON.stringify(data.user));
+        console.log('Connexion réussie, redirection vers sélection hôpital');
         navigate('/select-hopital');
       } else {
         // Erreur (ex: utilisateur non trouvé, mot de passe incorrect)
@@ -73,6 +75,8 @@ export default function AuthScreen() {
         localStorage.setItem('token', 'demo-token');
         localStorage.setItem('patientName', 'Patient Test');
         localStorage.setItem('user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
+        localStorage.setItem('patient_user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
+        console.log('Mode démo activé, redirection vers sélection hôpital');
         navigate('/select-hopital');
       }
     }
@@ -120,7 +124,7 @@ export default function AuthScreen() {
               <Heart className="w-8 h-8 text-white" fill="white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">MédiSoins</h1>
+              <h1 className="text-3xl font-bold text-gray-900">HealthConnect</h1>
               <p className="text-sm text-gray-600">Votre santé, notre priorité</p>
             </div>
           </div>
