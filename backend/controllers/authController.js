@@ -13,9 +13,8 @@ exports.registerPatient = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(motdepasse, 10);
-    // Note: 'telephone' a été retiré de l'INSERT car la colonne n'existe pas dans la table users actuelle
     const newUser = await db.query(
-      'INSERT INTO patients (nom, email,numero,motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, numero',
+      'INSERT INTO patients (nom, email, telephone, motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, telephone',
       [nom, email, telephone,hashedPassword]
     );
     res.status(201).json(newUser.rows[0]);
