@@ -8,6 +8,8 @@ CREATE TABLE hopitaux (
     telephone VARCHAR(50),
     image_url TEXT
 );
+ALTER TABLE hopitaux ADD COLUMN email VARCHAR(255) UNIQUE NOT NULL;
+
 
 -- 2. Table des Patients (Table INDÉPENDANTE)
 CREATE TABLE patients (
@@ -75,3 +77,29 @@ CREATE TABLE notifications (
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20) DEFAULT 'unread'
 );
+
+-- 1. Créer la table des spécialités
+CREATE TABLE specialites (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL UNIQUE,
+    icon VARCHAR(50)
+);
+
+-- 2. Créer la table de liaison (Un hôpital a plusieurs spécialités, une spécialité est dans plusieurs hôpitaux)
+CREATE TABLE hopital_specialites (
+    hopital_id INTEGER REFERENCES hopitaux(id) ON DELETE CASCADE,
+    specialite_id INTEGER REFERENCES specialites(id) ON DELETE CASCADE,
+    PRIMARY KEY (hopital_id, specialite_id)
+);
+
+-- 3. Insérer quelques spécialités par défaut
+INSERT INTO specialites (nom, icon) VALUES 
+('Cardiologie'),
+('Médecine Générale'),
+('Pédiatrie'),
+('Orthopédie'),
+('Dermatologie'),
+('Neurologie'),
+('Ophtalmologie'),
+('Dentisterie');
+

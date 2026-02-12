@@ -24,51 +24,24 @@ export default function AppointmentsScreen() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
-    // Load appointments from localStorage
-    const stored = localStorage.getItem('appointments');
-    const loadedAppointments = stored ? JSON.parse(stored) : [];
-    
-    // Add some demo appointments if none exist
-    if (loadedAppointments.length === 0) {
-      const demoAppointments: Appointment[] = [
-        {
-          id: '1',
-          department: 'Cardiologie',
-          doctor: 'Dr. Sarah Leblanc',
-          date: '5 fév 2026',
-          time: '10:00',
-          status: 'Confirmé',
-        },
-        {
-          id: '2',
-          department: 'Médecine Générale',
-          doctor: 'Dr. Michel Dupuis',
-          date: '8 fév 2026',
-          time: '14:30',
-          status: 'Confirmé',
-        },
-        {
-          id: '3',
-          department: 'Dermatologie',
-          doctor: 'Dr. Lisa Moreau',
-          date: '28 jan 2026',
-          time: '11:00',
-          status: 'Terminé',
-        },
-        {
-          id: '4',
-          department: 'Pédiatrie',
-          doctor: 'Dr. Émilie Dubois',
-          date: '15 jan 2026',
-          time: '09:30',
-          status: 'Terminé',
-        },
-      ];
-      setAppointments(demoAppointments);
-      localStorage.setItem('appointments', JSON.stringify(demoAppointments));
-    } else {
-      setAppointments(loadedAppointments);
-    }
+    const fetchAppointments = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/appointments/patient/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          // On suppose que l'API renvoie les données formatées ou on les utilise telles quelles
+          // Si l'API renvoie des champs différents (ex: 'medical_condition' au lieu de 'department'), il faudra mapper ici.
+          setAppointments(data);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des rendez-vous:", error);
+      }
+    };
+
+    fetchAppointments();
   }, []);
 
   const getStatusColor = (status: string) => {
