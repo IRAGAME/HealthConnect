@@ -34,63 +34,12 @@ export default function HopitalSelectionScreen() {
   const fetchHopitals = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/hopitals');
+      const response = await fetch('http://localhost:5000/api/hospitals');
       
       if (response.ok) {
         const data = await response.json();
         setHopitals(data);
-      } else {
-        // Mode démo si le backend est inaccessible
-        setHopitals([
-          {
-            id: '1',
-            nom: 'Hôpital Central',
-            adresse: '123 Rue de la Santé, Paris',
-            telephone: '+33 1 23 45 67 89',
-            specialites: ['Cardiologie', 'Urgences']
-          },
-          {
-            id: '2',
-            nom: 'Clinique du Nord',
-            adresse: '456 Avenue de la République, Lille',
-            telephone: '+33 3 20 30 40 50',
-            specialites: ['Orthopédie', 'Chirurgie']
-          },
-          {
-            id: '3',
-            nom: 'Hôpital Saint-Pierre',
-            adresse: '789 Boulevard des Alpes, Lyon',
-            telephone: '+33 4 72 11 22 33',
-            specialites: ['Oncologie', 'Pédiatrie']
-          }
-        ]);
-      }
-    } catch (err) {
-      console.error('Erreur lors du chargement des hôpitaux:', err);
-      // Mode démo
-      setHopitals([
-        {
-          id: '1',
-          nom: 'Hôpital Central',
-          adresse: '123 Rue de la Santé, Paris',
-          telephone: '+33 1 23 45 67 89',
-          specialites: ['Cardiologie', 'Urgences']
-        },
-        {
-          id: '2',
-          nom: 'Clinique du Nord',
-          adresse: '456 Avenue de la République, Lille',
-          telephone: '+33 3 20 30 40 50',
-          specialites: ['Orthopédie', 'Chirurgie']
-        },
-        {
-          id: '3',
-          nom: 'Hôpital Saint-Pierre',
-          adresse: '789 Boulevard des Alpes, Lyon',
-          telephone: '+33 4 72 11 22 33',
-          specialites: ['Oncologie', 'Pédiatrie']
-        }
-      ]);
+      } 
     } finally {
       setLoading(false);
     }
