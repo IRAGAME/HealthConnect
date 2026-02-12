@@ -12,7 +12,7 @@ class Admin {
   }
 
   static async findByUserId(user_id) {
-    const query = 'SELECT * FROM admin WHERE user_id = const pool = require('../config/db');
+    const query = "SELECT * FROM admin WHERE user_id = const pool = require('../config/db')";
     
     class Admin {
       static async create(user_id) {
@@ -37,7 +37,7 @@ class Admin {
     }
     
     module.exports = Admin;
-    ';
+    
     try {
       const { rows } = await pool.query(query, [user_id]);
       return rows[0];
