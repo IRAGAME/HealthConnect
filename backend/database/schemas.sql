@@ -93,7 +93,7 @@ CREATE TABLE hopital_specialites (
 );
 
 -- 3. Insérer quelques spécialités par défaut
-INSERT INTO specialites (nom, icon) VALUES 
+INSERT INTO specialites (nom) VALUES 
 ('Cardiologie'),
 ('Médecine Générale'),
 ('Pédiatrie'),

@@ -48,7 +48,7 @@ export default function BookAppointmentScreen() {
         const response = await fetch('http://localhost:5000/api/doctors');
         if (response.ok) {
           let data = await response.json();
-          
+      
           // Filtrer par hôpital sélectionné si présent
           const selectedHospitalId = localStorage.getItem('selectedHospitalId');
           if (selectedHospitalId) {

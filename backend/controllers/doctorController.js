@@ -76,7 +76,7 @@ exports.getAllDoctors = async (req, res) => {
                 d.hospital_id,
                 h.nom as hospital_name
             FROM users u
-            JOIN doctors d ON u.id = d.user_id
+            JOIN docteur d ON u.id = d.user_id
             LEFT JOIN hopitaux h ON d.hospital_id = h.id
             WHERE u.role = 'doctor'
             ORDER BY u.nom;
@@ -131,7 +131,7 @@ exports.updateDoctor = async (req, res) => {
     try {
         await client.query('BEGIN');
 
-        const doctorResult = await client.query('SELECT user_id FROM doctors WHERE id = $1 FOR UPDATE', [id]);
+        const doctorResult = await client.query('SELECT user_id FROM docteur WHERE id = $1 FOR UPDATE', [id]);
         if (doctorResult.rows.length === 0) {
             throw new Error("Docteur non trouvé");
         }
@@ -150,7 +150,7 @@ exports.updateDoctor = async (req, res) => {
         );
 
         await client.query(
-            'UPDATE doctors SET hospital_id = COALESCE($1, hospital_id), specialite = COALESCE($2, specialite) WHERE id = $3',
+            'UPDATE docteur SET hospital_id = COALESCE($1, hospital_id), specialite = COALESCE($2, specialite) WHERE id = $3',
             [hospital_id, specialite, id]
         );
 
@@ -170,7 +170,7 @@ exports.deleteDoctor = async (req, res) => {
     // Logique identique à adminController : supprimer l'user supprime le docteur en cascade
     // ... (implémentation simplifiée ici, voir adminController pour détails complets si besoin)
     // Pour faire simple, on réutilise la logique de suppression par user_id
-    const doctorResult = await db.query('SELECT user_id FROM doctors WHERE id = $1', [id]);
+    const doctorResult = await db.query('SELECT user_id FROM docteur WHERE id = $1', [id]);
     if (doctorResult.rows.length === 0) return res.status(404).json({ message: "Docteur non trouvé" });
     
     try {
