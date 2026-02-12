@@ -4,9 +4,10 @@ const db = require('../config/db');
 exports.createHospital = async (req, res) => {
   // On récupère les données envoyées depuis Postman
   const { nom, adresse, telephone, image_url,email  } = req.body;
-  // Générer un slug automatiquement 
-  const slug = nom.toLowerCase().trim().replace(/\s+/g, '-');
-  
+  // Génération automatique du slug (ex: "Hôpital Central" -> "hopital-central")
+  // On met en minuscule, remplace les espaces par des tirets, et supprime les caractères spéciaux
+  const slug = nom.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
   try {
     const newHospital = await db.query(
       'INSERT INTO hopitaux (nom, slug, adresse, telephone, image_url,email) VALUES ($1, $2, $3, $4, $5,$6) RETURNING *',
