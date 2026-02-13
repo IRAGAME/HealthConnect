@@ -15,7 +15,7 @@ exports.createAppointment = async (req, res) => {
     
     // Créer une notification automatique (Fonctionnalité 1 du frontend)
     await db.query(
-      `INSERT INTO notifications (user_id, type, message, sent_at, status)
+      `INSERT INTO notifications (patient_id, type, message, sent_at, status)
        VALUES ($1, 'Rendez-vous', 'Votre rendez-vous a été créé avec succès.', NOW(), 'non_lu')`,
       [patient_id]
     );

@@ -13,13 +13,8 @@ exports.registerPatient = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(motdepasse, 10);
     const newUser = await db.query(
-<<<<<<< HEAD
-      'INSERT INTO patients (nom, email, numero, motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, numero',
-      [nom, email, telephone, hashedPassword]
-=======
       'INSERT INTO patients (nom, email, telephone, motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, telephone',
       [nom, email, telephone,hashedPassword]
->>>>>>> 9d4a6065b6cf351da41ccc3888b6f4c7c8add112
     );
     res.status(201).json(newUser.rows[0]);
   } catch (err) {
