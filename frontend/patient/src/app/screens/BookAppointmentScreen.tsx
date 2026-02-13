@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
@@ -23,41 +23,58 @@ export default function BookAppointmentScreen() {
   const [medicalCondition, setMedicalCondition] = useState('');
   const [medicalDescription, setMedicalDescription] = useState('');
 
-  const departments = [
-    { value: 'cardiology', label: 'Cardiologie', icon: '❤️' },
-    { value: 'general', label: 'Médecine Générale', icon: '🏥' },
-    { value: 'pediatrics', label: 'Pédiatrie', icon: '👶' },
-    { value: 'orthopedics', label: 'Orthopédie', icon: '🦴' },
-    { value: 'dermatology', label: 'Dermatologie', icon: '💆' },
-    { value: 'neurology', label: 'Neurologie', icon: '🧠' },
-  ];
+  // États pour les données dynamiques
+  const [doctorsList, setDoctorsList] = useState<any[]>([]);
+  const [departmentsList, setDepartmentsList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const doctors: Record<string, Array<{ value: string; label: string }>> = {
-    cardiology: [
-      { value: 'dr-johnson', label: 'Dr. Sarah Leblanc' },
-      { value: 'dr-williams', label: 'Dr. Robert Martin' },
-    ],
-    general: [
-      { value: 'dr-chen', label: 'Dr. Michel Dupuis' },
-      { value: 'dr-patel', label: 'Dr. Priya Patel' },
-    ],
-    pediatrics: [
-      { value: 'dr-davis', label: 'Dr. Émilie Dubois' },
-      { value: 'dr-martinez', label: 'Dr. Carlos Martinez' },
-    ],
-    orthopedics: [
-      { value: 'dr-anderson', label: 'Dr. Jacques Bernard' },
-      { value: 'dr-lee', label: 'Dr. Jennifer Laurent' },
-    ],
-    dermatology: [
-      { value: 'dr-brown', label: 'Dr. Lisa Moreau' },
-      { value: 'dr-garcia', label: 'Dr. Maria Garcia' },
-    ],
-    neurology: [
-      { value: 'dr-wilson', label: 'Dr. David Rousseau' },
-      { value: 'dr-taylor', label: 'Dr. Amanda Petit' },
-    ],
+  // Fonction utilitaire pour les icônes
+  const getDepartmentIcon = (dept: string) => {
+    const lower = dept.toLowerCase();
+    if (lower.includes('cardio')) return '❤️';
+    if (lower.includes('général') || lower.includes('general')) return '🏥';
+    if (lower.includes('pédiatrie') || lower.includes('pediatrie')) return '👶';
+    if (lower.includes('ortho')) return '🦴';
+    if (lower.includes('derma')) return '💆';
+    if (lower.includes('neuro')) return '🧠';
+    if (lower.includes('dent')) return '🦷';
+    if (lower.includes('ophtalmo')) return '👁️';
+    return '🏥';
   };
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/doctors');
+        if (response.ok) {
+          let data = await response.json();
+      
+          // Filtrer par hôpital sélectionné si présent
+          const selectedHospitalId = localStorage.getItem('selectedHospitalId');
+          if (selectedHospitalId) {
+            data = data.filter((d: any) => d.hospital_id && d.hospital_id.toString() === selectedHospitalId);
+          }
+          setDoctorsList(data);
+
+          // Extraire les spécialités uniques
+          const uniqueSpecialties = Array.from(new Set(data.map((d: any) => d.specialite))).map((spec: any) => ({
+            value: spec,
+            label: spec,
+            icon: getDepartmentIcon(spec)
+          }));
+          setDepartmentsList(uniqueSpecialties);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des médecins:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  // Filtrer les médecins selon le département sélectionné
+  const filteredDoctors = doctorsList.filter(d => d.specialite === selectedDepartment);
 
   const timeSlots = [
     '09:00', '09:30', '10:00', '10:30',
@@ -72,8 +89,8 @@ export default function BookAppointmentScreen() {
       const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
       const newAppointment = {
         id: Date.now().toString(),
-        department: departments.find(d => d.value === selectedDepartment)?.label,
-        doctor: doctors[selectedDepartment]?.find(d => d.value === selectedDoctor)?.label,
+        department: selectedDepartment,
+        doctor: doctorsList.find(d => d.doctor_id.toString() === selectedDoctor)?.nom,
         medicalCondition,
         medicalDescription,
         date: format(selectedDate, 'd MMM yyyy', { locale: fr }),
@@ -115,7 +132,7 @@ export default function BookAppointmentScreen() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {departments.map((dept) => (
+                  {departmentsList.map((dept) => (
                     <button key={dept.value} onClick={() => { setSelectedDepartment(dept.value); setSelectedDoctor(''); }} className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${selectedDepartment === dept.value ? `border-primary ${isDark ? 'bg-primary/20' : 'bg-primary/5'} shadow-md` : `border-${isDark ? 'slate-600' : 'gray-200'} ${isDark ? 'hover:border-slate-500 bg-slate-600' : 'hover:border-gray-300'} hover:shadow-sm`}`}>
                       <div className="text-2xl mb-2">{dept.icon}</div>
                       <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{dept.label}</p>
@@ -140,8 +157,8 @@ export default function BookAppointmentScreen() {
                       <SelectValue placeholder={t('booking.selectDoctor')} />
                     </SelectTrigger>
                     <SelectContent className={isDark ? 'bg-slate-700' : ''}>
-                      {doctors[selectedDepartment]?.map((doctor) => (
-                        <SelectItem key={doctor.value} value={doctor.value} className={isDark ? 'text-white' : ''}>{doctor.label}</SelectItem>
+                      {filteredDoctors.map((doctor) => (
+                        <SelectItem key={doctor.doctor_id} value={doctor.doctor_id.toString()} className={isDark ? 'text-white' : ''}>{doctor.nom}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -208,7 +225,7 @@ export default function BookAppointmentScreen() {
                 {selectedDepartment ? (
                   <div className={`p-3 rounded-xl ${isDark ? 'bg-slate-600' : 'bg-gray-50'}`}>
                     <Label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Service</Label>
-                    <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{departments.find(d => d.value === selectedDepartment)?.label}</p>
+                    <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{selectedDepartment}</p>
                   </div>
                 ) : (
                   <div className={`p-3 rounded-xl text-center text-sm ${isDark ? 'bg-slate-600 text-gray-400' : 'bg-gray-50 text-gray-500'}`}>Aucun service sélectionné</div>
@@ -217,7 +234,7 @@ export default function BookAppointmentScreen() {
                 {selectedDoctor ? (
                   <div className={`p-3 rounded-xl ${isDark ? 'bg-slate-600' : 'bg-gray-50'}`}>
                     <Label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Médecin</Label>
-                    <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{doctors[selectedDepartment]?.find(d => d.value === selectedDoctor)?.label}</p>
+                    <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{doctorsList.find(d => d.doctor_id.toString() === selectedDoctor)?.nom}</p>
                   </div>
                 ) : (
                   <div className={`p-3 rounded-xl text-center text-sm ${isDark ? 'bg-slate-600 text-gray-400' : 'bg-gray-50 text-gray-500'}`}>Aucun médecin sélectionné</div>

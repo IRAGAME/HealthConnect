@@ -17,6 +17,8 @@ export default function DashboardScreen() {
   const { t, language, setLanguage } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [upcomingAppointments, setUpcomingAppointments] = useState<any[]>([]);
+  const [notificationsCount, setNotificationsCount] = useState(0);
 
 
   useEffect(() => {
@@ -38,6 +40,37 @@ export default function DashboardScreen() {
       setPatientName(name);
     }
 
+    // Récupération des données dynamiques
+    const fetchData = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      try {
+        // 1. Récupérer les rendez-vous
+        // Note: Assurez-vous que cette route existe dans votre backend
+        const aptResponse = await fetch(`http://localhost:5000/api/appointments/patient/${userId}`);
+        if (aptResponse.ok) {
+          const aptData = await aptResponse.json();
+          // Filtrer pour n'avoir que les futurs rendez-vous et en prendre 3
+          const upcoming = aptData
+            .filter((a: any) => a.status === 'Confirmé' || a.status === 'En attente')
+            .slice(0, 3);
+          setUpcomingAppointments(upcoming);
+        }
+
+        // 2. Récupérer les notifications
+        const notifResponse = await fetch(`http://localhost:5000/api/notifications/user/${userId}`);
+        if (notifResponse.ok) {
+          const notifData = await notifResponse.json();
+          const unreadCount = notifData.filter((n: any) => n.status !== 'lu').length;
+          setNotificationsCount(unreadCount);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des données du dashboard:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleLogout = () => {
@@ -45,8 +78,6 @@ export default function DashboardScreen() {
     localStorage.removeItem('patient_user');
     navigate('/');
   };
-
-  const upcomingAppointments = JSON.parse(localStorage.getItem('appointments') || '[]').slice(0, 3);
 
   const quickActions = [
     {
@@ -247,7 +278,7 @@ export default function DashboardScreen() {
                   <span className="text-sm text-cyan-100">Notifications</span>
                   <Bell className="w-4 h-4" />
                 </div>
-                <p className="text-3xl font-bold">0</p>
+                <p className="text-3xl font-bold">{notificationsCount}</p>
               </div>
             </CardContent>
           </Card>

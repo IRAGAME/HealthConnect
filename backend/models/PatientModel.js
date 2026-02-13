@@ -4,10 +4,10 @@ class User {
   // Créer un compte patient 
   static async create(nom, email,telephone,motdepasse) {
     const query = `
-      INSERT INTO patient(nom, email,numero,motdepasse) 
+      INSERT INTO patients (nom, email, telephone, motdepasse) 
       VALUES ($1, $2, $3, $4) 
       RETURNING *`;
-    const values = [nom, email,numero, motdepasse];
+    const values = [nom, email, telephone, motdepasse];
 
     try {
       const { rows } = await pool.query(query, values);
@@ -19,7 +19,7 @@ class User {
 
   // Trouver un utilisateur par email
   static async findByEmail(email) {
-    const query = 'SELECT * FROM patient WHERE email = $1';
+    const query = 'SELECT * FROM patients WHERE email = $1';
     try {
       const { rows } = await pool.query(query, [email]);
       return rows[0];

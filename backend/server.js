@@ -5,6 +5,10 @@ const path=require('path');
 const pool= require('./config/db')
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const hospitalRoutes = require('./routes/hospitalRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const doctorRoutes = require('./routes/doctorRoutes');
+const specialtyRoutes = require('./routes/specialtyRoutes');
 
 const PORT = process.env.PORT || 5000;
 const app=express()
@@ -31,6 +35,10 @@ app.use(express.json()); // Permet au serveur de comprendre le JSON envoyé par 
 
 // --- Routes ---
 app.use('/api/auth', authRoutes);
+app.use('/api/hospitals', hospitalRoutes);
+app.use('/api/admins', adminRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/specialties', specialtyRoutes);
 
 // --- Données de l'API (simule une base de données en attendant la connexion à PostgreSQL) ---
 
