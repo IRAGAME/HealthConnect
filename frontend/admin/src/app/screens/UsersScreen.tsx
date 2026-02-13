@@ -3,14 +3,12 @@ import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useAdmin } from '@/app/contexts/AdminContext';
 import { ArrowLeft, Plus, Edit2, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 
 export default function UsersScreen() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { t } = useLanguage();
   const { users, deleteUser } = useAdmin();
-  const [showForm, setShowForm] = useState(false);
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -62,7 +60,7 @@ export default function UsersScreen() {
             </div>
 
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => navigate('/create-user')}
               className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
             >
               <Plus className="w-5 h-5" />
