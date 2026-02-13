@@ -37,15 +37,15 @@ export default function EmergencyScreen() {
   };
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40 text-white' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
       {/* Header */}
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40' : 'bg-white/80 border-gray-200/40'} border-b backdrop-blur-md sticky top-0 z-40 transition-all duration-300`}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40' : 'bg-white/80 border-gray-200/40'} border-b backdrop-blur-md sticky top-0 z-40 transition-all duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('/dashboard')}
-                className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-800 hover:bg-slate-700 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+                className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -73,7 +73,7 @@ export default function EmergencyScreen() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Form Section */}
         {showForm && (
-          <div className={`mb-8 p-6 rounded-xl border-2 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'} animate-slideDown`}>
+          <div className={`mb-8 p-6 rounded-xl border-2 ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'} animate-slideDown`}>
             <h2 className="text-xl font-bold mb-4">{t('emergencies.newCase')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -84,7 +84,7 @@ export default function EmergencyScreen() {
                   type="text"
                   value={formData.patientName}
                   onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-900/50 border-cyan-900/40 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
                   placeholder="Nom du patient"
                 />
               </div>
@@ -95,7 +95,7 @@ export default function EmergencyScreen() {
                 <select
                   value={formData.level}
                   onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) as EmergencyLevel })}
-                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-900/50 border-cyan-900/40 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
                 >
                   <option value={1}>{t('emergencies.level1')}</option>
                   <option value={2}>{t('emergencies.level2')}</option>
@@ -110,7 +110,7 @@ export default function EmergencyScreen() {
                 <textarea
                   value={formData.symptoms}
                   onChange={(e) => setFormData({ ...formData, symptoms: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-900/50 border-cyan-900/40 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-red-500`}
                   placeholder="Description des symptômes..."
                   rows={4}
                 />
@@ -125,7 +125,7 @@ export default function EmergencyScreen() {
               </button>
               <button
                 onClick={() => setShowForm(false)}
-                className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-200 ${isDark ? 'border-slate-600 text-gray-300 hover:bg-slate-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                className={`flex-1 px-4 py-2 rounded-lg border transition-all duration-200 ${isDark ? 'border-cyan-900/40 text-gray-300 hover:bg-slate-900/70' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
               >
                 {t('action.cancel')}
               </button>
@@ -143,7 +143,7 @@ export default function EmergencyScreen() {
             return (
               <div
                 key={level}
-                className={`p-4 rounded-xl border-2 transform transition-all duration-300 hover:scale-105 cursor-pointer ${isDark ? 'bg-slate-800 border-slate-700 hover:border-red-500' : 'bg-white border-gray-200 hover:border-red-500'}`}
+                className={`p-4 rounded-xl border-2 transform transition-all duration-300 hover:scale-105 cursor-pointer ${isDark ? 'bg-slate-900/60 border-cyan-900/30 hover:border-red-500' : 'bg-white border-gray-200 hover:border-red-500'}`}
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`p-2 rounded-lg ${config.color}`}>
@@ -164,8 +164,8 @@ export default function EmergencyScreen() {
         </div>
 
         {/* Active Emergencies List */}
-        <div className={`rounded-xl border-2 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'} overflow-hidden`}>
-          <div className={`p-4 border-b ${isDark ? 'border-slate-700 bg-slate-900' : 'border-gray-200 bg-gray-50'}`}>
+        <div className={`rounded-xl border-2 ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'} overflow-hidden`}>
+          <div className={`p-4 border-b ${isDark ? 'border-cyan-900/30 bg-slate-900/70' : 'border-gray-200 bg-gray-50'}`}>
             <h2 className="text-xl font-bold">Cas d'Urgence Actifs</h2>
           </div>
 
@@ -182,7 +182,7 @@ export default function EmergencyScreen() {
                 return (
                   <div
                     key={emergency.id}
-                    className={`p-4 hover:${isDark ? 'bg-slate-700' : 'bg-gray-50'} transition-all duration-200`}
+                    className={`p-4 hover:${isDark ? 'bg-slate-900/50' : 'bg-gray-50'} transition-all duration-200`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">

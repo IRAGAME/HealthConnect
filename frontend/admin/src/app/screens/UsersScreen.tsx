@@ -37,15 +37,15 @@ export default function UsersScreen() {
   };
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
       {/* Header */}
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40' : 'bg-white/80 border-gray-200/40'} border-b shadow-sm`}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40' : 'bg-white/80 border-gray-200/40'} border-b shadow-sm`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/dashboard')}
-                className={`p-2 rounded-lg ${isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+                className={`p-2 rounded-lg ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80' : 'bg-gray-100 hover:bg-gray-200'}`}
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -73,11 +73,11 @@ export default function UsersScreen() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Users Table */}
-        <div className={`rounded-lg shadow-md overflow-hidden ${isDark ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-gray-200'}`}>
+        <div className={`rounded-lg shadow-md overflow-hidden ${isDark ? 'bg-slate-900/60 border border-cyan-900/30' : 'bg-white border border-gray-200'}`}>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className={isDark ? 'bg-slate-700 border-b border-slate-600' : 'bg-gray-50 border-b border-gray-200'}>
+                <tr className={isDark ? 'bg-slate-900/50 border-b border-cyan-900/40' : 'bg-gray-50 border-b border-gray-200'}>
                   <th className={`px-6 py-3 text-left text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-900'}`}>
                     {t('users.name')}
                   </th>
@@ -102,7 +102,7 @@ export default function UsersScreen() {
                 {users.map((user) => (
                   <tr
                     key={user.id}
-                    className={`border-b transition-colors ${isDark ? 'border-slate-600 hover:bg-slate-700/50' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`border-b transition-colors ${isDark ? 'border-cyan-900/40 hover:bg-slate-900/60' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <td className={`px-6 py-4 text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
                       {user.nom}
@@ -144,7 +144,7 @@ export default function UsersScreen() {
         </div>
 
         {users.length === 0 && (
-          <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-800' : 'bg-gray-50'}`}>
+          <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-900/60' : 'bg-gray-50'}`}>
             <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
               Aucun utilisateur trouvé
             </p>

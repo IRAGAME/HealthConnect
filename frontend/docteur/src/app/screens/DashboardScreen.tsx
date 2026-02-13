@@ -25,9 +25,9 @@ function DoctorDashboard() {
   ];
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
       {/* Header */}
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40 backdrop-blur-md' : 'bg-white/80 border-gray-200/40 backdrop-blur-md'} border-b shadow-sm transition-colors duration-300 sticky top-0 z-50`}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40 backdrop-blur-md' : 'bg-white/80 border-gray-200/40 backdrop-blur-md'} border-b shadow-sm transition-colors duration-300 sticky top-0 z-50`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -48,7 +48,7 @@ function DoctorDashboard() {
               {/* Notifications Badge */}
               <button
                 onClick={() => navigate('/notifications')}
-                className={`relative p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-gray-200 hover:bg-gray-300'}`}
+                className={`relative p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80' : 'bg-gray-200 hover:bg-gray-300'}`}
               >
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -61,7 +61,7 @@ function DoctorDashboard() {
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-gray-200 hover:bg-gray-300'}`}
+                className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80' : 'bg-gray-200 hover:bg-gray-300'}`}
               >
                 {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
@@ -70,12 +70,12 @@ function DoctorDashboard() {
               <div className="relative">
                 <button
                   onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                  className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-gray-200 hover:bg-gray-300'}`}
+                  className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80' : 'bg-gray-200 hover:bg-gray-300'}`}
                 >
                   <Globe className="w-5 h-5" />
                 </button>
                 {showLanguageMenu && (
-                  <div className={`absolute right-0 mt-2 w-32 rounded-lg shadow-lg border-2 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+                  <div className={`absolute right-0 mt-2 w-32 rounded-lg shadow-lg border-2 ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'}`}>
                     {(['fr', 'en', 'ki'] as const).map((lang) => (
                       <button
                         key={lang}
@@ -86,7 +86,7 @@ function DoctorDashboard() {
                         className={`block w-full text-left px-4 py-2 text-sm first:rounded-t-lg last:rounded-b-lg transition-colors ${
                           language === lang
                             ? `${isDark ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'}`
-                            : `${isDark ? 'text-gray-300 hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100'}`
+                            : `${isDark ? 'text-gray-300 hover:bg-slate-900/70' : 'text-gray-700 hover:bg-gray-100'}`
                         }`}
                       >
                         {lang === 'fr' ? 'Français' : lang === 'en' ? 'English' : 'Kirundi'}
@@ -114,7 +114,7 @@ function DoctorDashboard() {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`p-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200 ${isDark ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-gray-200'}`}
+              className={`p-6 rounded-lg shadow-md transform hover:scale-105 transition-all duration-200 ${isDark ? 'bg-slate-900/60 border border-cyan-900/30' : 'bg-white border border-gray-200'}`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="text-3xl">{stat.icon}</div>
@@ -166,7 +166,7 @@ function QuickActionCard({ icon, title, description, color, onClick, isDark, bad
   return (
     <button
       onClick={onClick}
-      className={`group relative p-6 rounded-xl transition-all duration-300 transform hover:scale-105 overflow-hidden ${isDark ? 'bg-slate-800 hover:bg-slate-700 border border-slate-700' : 'bg-white hover:shadow-xl border border-gray-200'}`}
+      className={`group relative p-6 rounded-xl transition-all duration-300 transform hover:scale-105 overflow-hidden ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80 border border-cyan-900/30' : 'bg-white hover:shadow-xl border border-gray-200'}`}
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
       <div className="relative z-10">

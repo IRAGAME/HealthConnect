@@ -52,15 +52,15 @@ export default function StatisticsScreen() {
   ];
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40 text-white' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
       {/* Header */}
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40' : 'bg-white/80 border-gray-200/40'} border-b backdrop-blur-md sticky top-0 z-40 transition-all duration-300`}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40' : 'bg-white/80 border-gray-200/40'} border-b backdrop-blur-md sticky top-0 z-40 transition-all duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('/dashboard')}
-                className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-800 hover:bg-slate-700 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+                className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -89,7 +89,7 @@ export default function StatisticsScreen() {
               <div
                 key={index}
                 className={`p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 hover:shadow-xl ${isDark
-                  ? 'bg-slate-800 border-slate-700 hover:border-yellow-500'
+                  ? 'bg-slate-900/60 border-cyan-900/30 hover:border-yellow-500'
                   : 'bg-white border-gray-200 hover:border-yellow-500'
                 }`}
               >
@@ -115,17 +115,17 @@ export default function StatisticsScreen() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
           {/* Users Summary */}
-          <div className={`p-6 rounded-xl border-2 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+          <div className={`p-6 rounded-xl border-2 ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'}`}>
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Users className="w-5 h-5" />
               Résumé Utilisateurs
             </h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center pb-3 border-b border-slate-600">
+              <div className="flex justify-between items-center pb-3 border-b border-cyan-900/40">
                 <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Total</span>
                 <span className="text-2xl font-bold">{users.length}</span>
               </div>
-              <div className="flex justify-between items-center pb-3 border-b border-slate-600">
+              <div className="flex justify-between items-center pb-3 border-b border-cyan-900/40">
                 <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Patients</span>
                 <span className="text-2xl font-bold text-green-500">{users.filter(u => u.role === 'patient').length}</span>
               </div>
@@ -137,17 +137,17 @@ export default function StatisticsScreen() {
           </div>
 
           {/* Emergency Summary */}
-          <div className={`p-6 rounded-xl border-2 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+          <div className={`p-6 rounded-xl border-2 ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'}`}>
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-500" />
               Résumé Urgences
             </h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center pb-3 border-b border-slate-600">
+              <div className="flex justify-between items-center pb-3 border-b border-cyan-900/40">
                 <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Total</span>
                 <span className="text-2xl font-bold">{emergencies.length}</span>
               </div>
-              <div className="flex justify-between items-center pb-3 border-b border-slate-600">
+              <div className="flex justify-between items-center pb-3 border-b border-cyan-900/40">
                 <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Actives</span>
                 <span className="text-2xl font-bold text-red-500">{emergencies.filter(e => e.status === 'active').length}</span>
               </div>

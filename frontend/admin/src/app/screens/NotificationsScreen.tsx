@@ -57,14 +57,14 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
       {/* Header */}
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40' : 'bg-white/80 border-gray-200/40'} border-b shadow-sm`}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40' : 'bg-white/80 border-gray-200/40'} border-b shadow-sm`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate('/dashboard')}
-              className={`p-2 rounded-lg ${isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              className={`p-2 rounded-lg ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80' : 'bg-gray-100 hover:bg-gray-200'}`}
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -84,7 +84,7 @@ export default function NotificationsScreen() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid md:grid-cols-3 gap-6">
           {/* Form */}
-          <div className={`p-6 rounded-lg shadow-md ${isDark ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-gray-200'}`}>
+          <div className={`p-6 rounded-lg shadow-md ${isDark ? 'bg-slate-900/60 border border-cyan-900/30' : 'bg-white border border-gray-200'}`}>
             <h2 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Envoyer une Notification
             </h2>
@@ -97,7 +97,7 @@ export default function NotificationsScreen() {
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value as 'SMS' | 'WhatsApp' })}
-                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300'}`}
+                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-900/50 border-cyan-900/40 text-white' : 'bg-white border-gray-300'}`}
                 >
                   <option value="SMS">{t('notifications.sms')}</option>
                   <option value="WhatsApp">{t('notifications.whatsapp')}</option>
@@ -113,7 +113,7 @@ export default function NotificationsScreen() {
                   placeholder="+250788123456"
                   value={formData.destinataire}
                   onChange={(e) => setFormData({ ...formData, destinataire: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-500' : 'bg-white border-gray-300'}`}
+                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-900/50 border-cyan-900/40 text-white placeholder-gray-500' : 'bg-white border-gray-300'}`}
                 />
               </div>
 
@@ -125,7 +125,7 @@ export default function NotificationsScreen() {
                   value={formData.contenu}
                   onChange={(e) => setFormData({ ...formData, contenu: e.target.value })}
                   rows={5}
-                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-500' : 'bg-white border-gray-300'}`}
+                  className={`w-full px-4 py-2 rounded-lg border ${isDark ? 'bg-slate-900/50 border-cyan-900/40 text-white placeholder-gray-500' : 'bg-white border-gray-300'}`}
                   placeholder="Contenu du message..."
                 />
               </div>
@@ -146,7 +146,7 @@ export default function NotificationsScreen() {
               notifications.map((notif) => (
                 <div
                   key={notif.id}
-                  className={`p-6 rounded-lg shadow-md border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}
+                  className={`p-6 rounded-lg shadow-md border ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'}`}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
@@ -187,7 +187,7 @@ export default function NotificationsScreen() {
                 </div>
               ))
             ) : (
-              <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-800' : 'bg-gray-50'}`}>
+              <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-900/60' : 'bg-gray-50'}`}>
                 <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                   Aucune notification créée
                 </p>

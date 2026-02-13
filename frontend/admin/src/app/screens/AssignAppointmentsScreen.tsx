@@ -78,14 +78,14 @@ export default function AssignAppointmentsScreen() {
   };
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40 text-white' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
       {/* Header */}
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40' : 'bg-white/80 border-gray-200/40'} border-b backdrop-blur-md sticky top-0 z-40 transition-all duration-300`}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40' : 'bg-white/80 border-gray-200/40'} border-b backdrop-blur-md sticky top-0 z-40 transition-all duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/dashboard')}
-              className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-800 hover:bg-slate-700 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+              className={`p-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/60 hover:bg-slate-900/80 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -107,14 +107,14 @@ export default function AssignAppointmentsScreen() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Bar */}
         <div className="mb-6">
-          <div className={`relative rounded-xl overflow-hidden border-2 ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
+          <div className={`relative rounded-xl overflow-hidden border-2 ${isDark ? 'border-cyan-900/30' : 'border-gray-200'}`}>
             <Search className={`absolute left-4 top-3 w-5 h-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
             <input
               type="text"
               placeholder="Rechercher par patient ou département..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-12 pr-4 py-3 ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-gray-200'} focus:outline-none focus:ring-2 focus:ring-purple-500`}
+              className={`w-full pl-12 pr-4 py-3 ${isDark ? 'bg-slate-900/60 border-cyan-900/30 text-white' : 'bg-white border-gray-200'} focus:outline-none focus:ring-2 focus:ring-purple-500`}
             />
           </div>
         </div>
@@ -149,8 +149,8 @@ export default function AssignAppointmentsScreen() {
         </div>
 
         {/* Appointments List */}
-        <div className={`rounded-xl border-2 overflow-hidden ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
-          <div className={`p-6 border-b ${isDark ? 'border-slate-700 bg-slate-900' : 'border-gray-200 bg-gray-50'}`}>
+        <div className={`rounded-xl border-2 overflow-hidden ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'}`}>
+          <div className={`p-6 border-b ${isDark ? 'border-cyan-900/30 bg-slate-900/70' : 'border-gray-200 bg-gray-50'}`}>
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Calendar className="w-5 h-5" />
               Rendez-vous à Assigner
@@ -170,8 +170,8 @@ export default function AssignAppointmentsScreen() {
                 <div
                   key={appointment.id}
                   className={`p-6 transition-all duration-200 ${selectedAppointmentId === appointment.id
-                    ? isDark ? 'bg-slate-700' : 'bg-purple-50'
-                    : isDark ? 'hover:bg-slate-700' : 'hover:bg-gray-50'
+                    ? isDark ? 'bg-slate-900/50' : 'bg-purple-50'
+                    : isDark ? 'hover:bg-slate-900/70' : 'hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4 mb-4">
@@ -217,7 +217,7 @@ export default function AssignAppointmentsScreen() {
                             onClick={() => handleAssignDoctor(appointment.id, doctor.name)}
                             className={`p-3 rounded-lg text-left transition-all duration-200 ${selectedDoctor === doctor.id
                               ? 'bg-purple-500 text-white'
-                              : isDark ? 'bg-slate-700 hover:bg-slate-600' : 'bg-gray-200 hover:bg-gray-300'
+                              : isDark ? 'bg-slate-900/50 hover:bg-slate-600' : 'bg-gray-200 hover:bg-gray-300'
                             }`}
                           >
                             <div className="font-semibold text-sm">{doctor.name}</div>
@@ -230,7 +230,7 @@ export default function AssignAppointmentsScreen() {
                       <div className="flex gap-2 mt-3">
                         <button
                           onClick={() => setSelectedAppointmentId(null)}
-                          className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-700 hover:bg-slate-600' : 'bg-gray-300 hover:bg-gray-400'}`}
+                          className={`flex-1 px-4 py-2 rounded-lg transition-all duration-200 ${isDark ? 'bg-slate-900/50 hover:bg-slate-600' : 'bg-gray-300 hover:bg-gray-400'}`}
                         >
                           {t('action.cancel')}
                         </button>
@@ -274,7 +274,7 @@ export default function AssignAppointmentsScreen() {
               <div
                 key={doctor.id}
                 className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-105 transform ${isDark
-                  ? 'bg-slate-800 border-slate-700 hover:border-purple-500'
+                  ? 'bg-slate-900/60 border-cyan-900/30 hover:border-purple-500'
                   : 'bg-white border-gray-200 hover:border-purple-500'
                 }`}
               >
@@ -295,7 +295,7 @@ export default function AssignAppointmentsScreen() {
 function StatCard({ icon, label, value, isDark, highlight }: any) {
   return (
     <div className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${isDark
-      ? `${highlight ? 'bg-purple-900/50 border-purple-600' : 'bg-slate-800 border-slate-700'}`
+      ? `${highlight ? 'bg-purple-900/50 border-purple-600' : 'bg-slate-900/60 border-cyan-900/30'}`
       : `${highlight ? 'bg-purple-50 border-purple-200' : 'bg-white border-gray-200'}`
     }`}>
       <div className="flex items-center justify-between">
@@ -305,7 +305,7 @@ function StatCard({ icon, label, value, isDark, highlight }: any) {
         </div>
         <div className={`p-3 rounded-lg ${highlight
           ? 'bg-gradient-to-br from-purple-500 to-pink-500'
-          : isDark ? 'bg-slate-700' : 'bg-gray-200'
+          : isDark ? 'bg-slate-900/50' : 'bg-gray-200'
         } text-white`}>
           {icon}
         </div>
