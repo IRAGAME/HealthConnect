@@ -101,5 +101,11 @@ INSERT INTO specialites (nom) VALUES
 ('Dermatologie'),
 ('Neurologie'),
 ('Ophtalmologie'),
+('Pneumologie'),
+('Médecine interne'),
+('Oto-rhino-laryngologie(ORL)'),
+('Gynécologie'),
+('Radiologie'),
+('Oncologie'),
 ('Dentisterie');
 
