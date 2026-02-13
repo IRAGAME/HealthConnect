@@ -3,7 +3,7 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useAdmin } from '@/app/contexts/AdminContext';
 import { useEmergency } from '@/app/contexts/EmergencyContext';
-import { ArrowLeft, TrendingUp, Users, Calendar, AlertCircle, BarChart3 } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Users, AlertCircle, BarChart3 } from 'lucide-react';
 
 export default function StatisticsScreen() {
   const navigate = useNavigate();
@@ -21,13 +21,13 @@ export default function StatisticsScreen() {
     },
     {
       label: 'Patients',
-      value: users.filter(u => u.role === 'patient').length,
+      value: users.filter(u => u.rôle === 'patient').length,
       icon: Users,
       color: 'from-green-500 to-emerald-500',
     },
     {
       label: 'Médecins',
-      value: users.filter(u => u.role === 'doctor').length,
+      value: users.filter(u => u.rôle === 'médecin').length,
       icon: Users,
       color: 'from-purple-500 to-pink-500',
     },
@@ -127,11 +127,11 @@ export default function StatisticsScreen() {
               </div>
               <div className="flex justify-between items-center pb-3 border-b border-cyan-900/40">
                 <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Patients</span>
-                <span className="text-2xl font-bold text-green-500">{users.filter(u => u.role === 'patient').length}</span>
+                <span className="text-2xl font-bold text-green-500">{users.filter(u => u.rôle === 'patient').length}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>Médecins</span>
-                <span className="text-2xl font-bold text-purple-500">{users.filter(u => u.role === 'doctor').length}</span>
+                <span className="text-2xl font-bold text-purple-500">{users.filter(u => u.rôle === 'médecin').length}</span>
               </div>
             </div>
           </div>

@@ -5,7 +5,7 @@ interface User {
   nom: string;
   email: string;
   phone: string;
-  rôle: 'patient' | 'médecin' | 'admin';
+  rôle: 'patient' | 'médecin' | 'admin' | 'reception';
   statut: 'actif' | 'inactif' | 'suspendu';
   dateInscription: string;
 }
@@ -41,6 +41,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         rôle: 'médecin',
         statut: 'actif',
         dateInscription: '2024-01-10',
+      },
+      {
+        id: '3',
+        nom: 'Accueil Central',
+        email: 'reception@example.com',
+        phone: '+250788999000',
+        rôle: 'reception',
+        statut: 'actif',
+        dateInscription: '2024-01-12',
       },
     ];
   });

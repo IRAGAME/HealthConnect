@@ -8,6 +8,7 @@ import NotificationsScreen from '@/app/screens/NotificationsScreen';
 import AssignAppointmentsScreen from '@/app/screens/AssignAppointmentsScreen';
 import EmergencyScreen from '@/app/screens/EmergencyScreen';
 import StatisticsScreen from '@/app/screens/StatisticsScreen';
+import CreateUserScreen from '@/app/screens/CreateUserScreen';
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       { path: '/', Component: DashboardScreen },
       { path: '/dashboard', Component: DashboardScreen },
       { path: '/users', Component: UsersScreen },
+      { path: '/create-user', Component: CreateUserScreen },
       { path: '/appointments', Component: AppointmentsScreen },
       { path: '/assign-appointments', Component: AssignAppointmentsScreen },
       { path: '/emergencies', Component: EmergencyScreen },
