@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useNotification } from '@/app/contexts/NotificationContext';
-import { ArrowLeft, Bell, CheckCircle2, Calendar, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Bell, CheckCircle2, Calendar, AlertCircle, ChevronRight } from 'lucide-react';
 
 export default function NotificationsScreen() {
   const navigate = useNavigate();
@@ -86,18 +86,18 @@ export default function NotificationsScreen() {
               <div
                 key={notification.id}
                 onClick={() => markAsRead(notification.id)}
-                className={`group rounded-xl border-2 p-6 cursor-pointer transition-all duration-200 ${
+                className={`group rounded-2xl border p-6 cursor-pointer transition-all duration-200 backdrop-blur ${
                   notification.read
                     ? isDark
-                      ? 'bg-slate-900/60 border-cyan-900/30'
-                      : 'bg-white border-gray-200'
+                      ? 'bg-slate-900/40 border-cyan-900/20'
+                      : 'bg-white/80 border-gray-200'
                     : isDark
-                    ? 'bg-slate-900/60 border-cyan-500/30'
-                    : 'bg-blue-50 border-blue-300'
+                    ? 'bg-slate-900/60 border-cyan-500/30 shadow-[0_16px_40px_rgba(8,145,178,0.12)]'
+                    : 'bg-white/90 border-blue-200 shadow-[0_16px_40px_rgba(15,23,42,0.08)]'
                 }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className="mt-1">
+                  <div className={`mt-1 h-12 w-12 rounded-2xl flex items-center justify-center ${isDark ? 'bg-slate-900/70 border border-cyan-900/30' : 'bg-white border border-gray-100'} shadow-sm`}>
                     {getIcon(notification.type)}
                   </div>
 
@@ -137,6 +137,8 @@ export default function NotificationsScreen() {
                       </span>
                     </div>
                   </div>
+
+                  <ChevronRight className={`${isDark ? 'text-slate-600' : 'text-gray-300'} mt-2`} />
                 </div>
               </div>
             ))}

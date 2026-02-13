@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useNotification } from '@/app/contexts/NotificationContext';
-import { ArrowLeft, Send, Clock } from 'lucide-react';
+import { ArrowLeft, Send, Clock, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 export default function NotificationsScreen() {
@@ -10,7 +10,7 @@ export default function NotificationsScreen() {
   const { isDark } = useTheme();
   const { t } = useLanguage();
   const { notifications, addNotification, envoyer } = useNotification();
-  
+
   const [formData, setFormData] = useState({
     type: 'SMS' as 'SMS' | 'WhatsApp',
     destinataire: '',
@@ -19,7 +19,7 @@ export default function NotificationsScreen() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.destinataire || !formData.contenu) {
       alert('Veuillez remplir tous les champs');
       return;
@@ -43,8 +43,14 @@ export default function NotificationsScreen() {
       : isDark ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-800';
   };
 
+  const normalizeStatus = (status: string) => {
+    if (status === 'envoyÃ©e') return 'envoyée';
+    if (status === 'Ã©chouÃ©e') return 'échouée';
+    return status;
+  };
+
   const getStatusBadgeColor = (status: string) => {
-    switch (status) {
+    switch (normalizeStatus(status)) {
       case 'en attente':
         return isDark ? 'bg-yellow-900/30 text-yellow-400' : 'bg-yellow-100 text-yellow-800';
       case 'envoyée':
@@ -54,6 +60,11 @@ export default function NotificationsScreen() {
       default:
         return isDark ? 'bg-gray-900/30 text-gray-400' : 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const getStatusIcon = (status: string) => {
+    if (normalizeStatus(status) === 'en attente') return <Clock className="w-4 h-4" />;
+    return <Send className="w-4 h-4" />;
   };
 
   return (
@@ -84,7 +95,7 @@ export default function NotificationsScreen() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid md:grid-cols-3 gap-6">
           {/* Form */}
-          <div className={`p-6 rounded-lg shadow-md ${isDark ? 'bg-slate-900/60 border border-cyan-900/30' : 'bg-white border border-gray-200'}`}>
+          <div className={`p-6 rounded-2xl shadow-md ${isDark ? 'bg-slate-900/60 border border-cyan-900/30' : 'bg-white border border-gray-200'}`}>
             <h2 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Envoyer une Notification
             </h2>
@@ -146,32 +157,45 @@ export default function NotificationsScreen() {
               notifications.map((notif) => (
                 <div
                   key={notif.id}
-                  className={`p-6 rounded-lg shadow-md border ${isDark ? 'bg-slate-900/60 border-cyan-900/30' : 'bg-white border-gray-200'}`}
+                  className={`p-6 rounded-2xl border shadow-[0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-200 backdrop-blur ${
+                    isDark
+                      ? 'bg-slate-900/60 border-cyan-900/30 shadow-[0_16px_40px_rgba(8,145,178,0.12)]'
+                      : 'bg-white/90 border-gray-200'
+                  }`}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <div className="flex gap-2 mb-2">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeBadgeColor(notif.type)}`}>
-                          {notif.type}
-                        </span>
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(notif.statut)}`}>
-                          {notif.statut}
-                        </span>
+                  <div className="flex items-start gap-4">
+                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center ${isDark ? 'bg-slate-900/70 border border-cyan-900/30' : 'bg-white border border-gray-100'} shadow-sm`}>
+                      {getStatusIcon(notif.statut)}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="flex gap-2 mb-2">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeColor(notif.type)}`}>
+                              {notif.type}
+                            </span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(notif.statut)}`}>
+                              {normalizeStatus(notif.statut)}
+                            </span>
+                          </div>
+                          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                            À: {notif.destinataire}
+                          </p>
+                        </div>
+                        <ChevronRight className={`${isDark ? 'text-slate-600' : 'text-gray-300'} mt-1`} />
                       </div>
-                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        À: {notif.destinataire}
+
+                      <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} mt-3`}>
+                        {notif.contenu}
                       </p>
                     </div>
                   </div>
 
-                  <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} mb-4`}>
-                    {notif.contenu}
-                  </p>
-
                   {notif.statut === 'en attente' && (
                     <button
                       onClick={() => envoyer(notif.id)}
-                      className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                      className="mt-4 flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                     >
                       <Send className="w-4 h-4" />
                       <span>{t('notifications.send')}</span>
@@ -179,15 +203,15 @@ export default function NotificationsScreen() {
                   )}
 
                   {notif.dateEnvoi && (
-                    <div className={`text-xs mt-2 flex items-center space-x-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`text-xs mt-3 flex items-center space-x-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       <Clock className="w-3 h-3" />
-                      <span>Envoyé: {new Date(notif.dateEnvoi).toLocaleDateString()}</span>
+                      <span>Envoyée: {new Date(notif.dateEnvoi).toLocaleDateString()}</span>
                     </div>
                   )}
                 </div>
               ))
             ) : (
-              <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-900/60' : 'bg-gray-50'}`}>
+              <div className={`text-center py-12 rounded-2xl ${isDark ? 'bg-slate-900/60' : 'bg-gray-50'}`}>
                 <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                   Aucune notification créée
                 </p>

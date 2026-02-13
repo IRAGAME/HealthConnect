@@ -4,7 +4,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { User, Mail, Lock, ShieldCheck, Sparkles, Stethoscope } from 'lucide-react';
+import { User, Mail, Lock, ShieldCheck, Sparkles, Stethoscope, AlertTriangle } from 'lucide-react';
 
 type Role = 'admin' | 'docteur' | 'reception';
 
@@ -12,6 +12,7 @@ const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<Role>('admin');
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const roleRedirectMap: Record<Role, string> = {
     admin: 'http://localhost:5174',
@@ -22,6 +23,7 @@ const LoginScreen: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError(null);
     try {
       const response = await fetch(`${apiBaseUrl}/auth/login`, {
         method: 'POST',
@@ -37,11 +39,11 @@ const LoginScreen: React.FC = () => {
         localStorage.setItem('role', role);
         window.location.assign(roleRedirectMap[role]);
       } else {
-        alert(data.message || data.error || `Erreur de connexion (${response.status})`);
+        setLoginError(data.message || data.error || `Erreur de connexion (${response.status})`);
       }
     } catch (err) {
       console.error(err);
-      alert(`Impossible de se connecter au serveur: ${err instanceof Error ? err.message : ''}`);
+      setLoginError(`Impossible de se connecter au serveur: ${err instanceof Error ? err.message : ''}`);
     }
   };
 
@@ -121,6 +123,14 @@ const LoginScreen: React.FC = () => {
 
                 <TabsContent value="login" className="space-y-4">
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    {loginError && (
+                      <div className="rounded-2xl border border-red-200/80 bg-red-50/80 px-4 py-3 text-sm text-red-700 shadow-sm">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="mt-0.5 h-4 w-4 text-red-500" />
+                          <span>{loginError}</span>
+                        </div>
+                      </div>
+                    )}
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-slate-700">Rôle</Label>
                       <select

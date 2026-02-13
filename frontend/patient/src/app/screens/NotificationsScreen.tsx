@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
-import { ArrowLeft, Bell, CheckCircle2, Calendar, Clock, AlertCircle, Info } from 'lucide-react';
+import { ArrowLeft, Bell, CheckCircle2, Calendar, Clock, AlertCircle, Info, ChevronRight } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 
 interface Notification {
@@ -111,8 +111,8 @@ export default function NotificationsScreen() {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
-      <header className={`${isDark ? 'bg-slate-900/80 border-slate-700/40 backdrop-blur-md' : 'bg-white/80 border-gray-200/40 backdrop-blur-md'} border-b shadow-sm transition-colors duration-300`}>
+    <div className={isDark ? 'dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/40' : 'min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50'}>
+      <header className={`${isDark ? 'bg-slate-900/75 border-cyan-900/40 backdrop-blur-md' : 'bg-white/80 border-gray-200/40 backdrop-blur-md'} border-b shadow-sm transition-colors duration-300`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -143,26 +143,47 @@ export default function NotificationsScreen() {
         {notifications.length > 0 ? (
           <div className="space-y-4 animate-fadeInUp">
             {notifications.map((notification, idx) => (
-              <Card key={notification.id} className={`border-0 shadow-lg transition-all duration-300 ${!notification.isRead ? isDark ? 'bg-gradient-to-r from-slate-700 to-slate-800 border border-slate-600/30' : 'bg-gradient-to-r from-white to-gray-50 border border-gray-200' : isDark ? 'bg-slate-800/50 border border-slate-700/20' : 'bg-gray-50/50 border border-gray-100'}`} style={{ animationDelay: `${idx * 30}ms` }}>
+              <Card
+                key={notification.id}
+                className={`border transition-all duration-300 ${!notification.isRead
+                  ? isDark
+                    ? 'bg-slate-900/60 border-cyan-500/30 shadow-[0_16px_40px_rgba(8,145,178,0.12)]'
+                    : 'bg-white/90 border-gray-200 shadow-[0_16px_40px_rgba(15,23,42,0.08)]'
+                  : isDark
+                  ? 'bg-slate-900/40 border-cyan-900/20'
+                  : 'bg-gray-50/70 border-gray-100'
+                } rounded-2xl backdrop-blur`}
+                style={{ animationDelay: `${idx * 30}ms` }}
+              >
                 <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className={`${getNotificationBgColor(notification.type)} p-3 rounded-xl flex-shrink-0`}>{getNotificationIcon(notification.type)}</div>
+                  <div className="flex items-start gap-4">
+                    <div className={`${getNotificationBgColor(notification.type)} p-3 rounded-2xl flex-shrink-0 shadow-sm`}>
+                      {getNotificationIcon(notification.type)}
+                    </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{notification.title}</h3>
-                            {!notification.isRead && <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></span>}
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              {notification.title}
+                            </h3>
+                            {!notification.isRead && <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />}
                           </div>
-                          <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>{notification.message}</p>
-                          <div className="flex items-center space-x-4 mt-3">
+                          <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                            {notification.message}
+                          </p>
+                          <div className="flex items-center gap-3 mt-3">
                             <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} flex items-center`}>
                               <Clock className="w-3 h-3 mr-1" />
                               {notification.timestamp}
                             </span>
+                            <span className={`text-[11px] px-2 py-0.5 rounded-full ${isDark ? 'bg-slate-900/70 text-cyan-200 border border-cyan-900/30' : 'bg-cyan-50 text-cyan-700 border border-cyan-100'}`}>
+                              Notification
+                            </span>
                           </div>
                         </div>
+                        <ChevronRight className={`${isDark ? 'text-slate-600' : 'text-gray-300'} mt-1`} />
                       </div>
                     </div>
 

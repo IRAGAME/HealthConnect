@@ -5,7 +5,7 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { User, Mail, Phone, Lock, Heart, Stethoscope } from 'lucide-react';
+import { User, Mail, Phone, Lock, Heart, Stethoscope, AlertTriangle } from 'lucide-react';
 
 export default function AuthScreen() {
   const navigate = useNavigate();
@@ -15,9 +15,10 @@ export default function AuthScreen() {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Vérifier si une redirection avec utilisateur authentifié est présente dans l'URL
+    // VÃ©rifier si une redirection avec utilisateur authentifiÃ© est prÃ©sente dans l'URL
     const searchParams = new URLSearchParams(window.location.search);
     const authUserParam = searchParams.get('auth_user');
 
@@ -30,15 +31,15 @@ export default function AuthScreen() {
         navigate('/select-hopital');
         return;
       } catch (error) {
-        // Afficher un message d'erreur pour aider à débugger
-        console.error("Erreur lors de l'analyse des données de l'utilisateur:", error);
-        alert("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+        // Afficher un message d'erreur pour aider Ã  dÃ©bugger
+        console.error("Erreur lors de l'analyse des donnÃ©es de l'utilisateur:", error);
+        alert("Une erreur s'est produite lors de la connexion. Veuillez rÃ©essayer.");
 
-        console.error("Erreur lors de l'analyse de l'utilisateur authentifié", error);
+        console.error("Erreur lors de l'analyse de l'utilisateur authentifiÃ©", error);
       }
     }
 
-    // Vérifier si une session existe déjà
+    // VÃ©rifier si une session existe dÃ©jÃ 
     const savedUser = localStorage.getItem('patient_user');
     if (savedUser) {
       navigate('/select-hopital');
@@ -47,6 +48,7 @@ export default function AuthScreen() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError(null);
     try {
       const response = await fetch('http://localhost:5000/api/auth', {
         method: 'POST',
@@ -57,26 +59,27 @@ export default function AuthScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        // Connexion réussie : on stocke le token et les infos
+        // Connexion rÃ©ussie : on stocke le token et les infos
         localStorage.setItem('token', data.token);
         localStorage.setItem('patientName', data.user.nom);
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('patient_user', JSON.stringify(data.user));
-        console.log('Connexion réussie, redirection vers sélection hôpital');
+        console.log('Connexion rÃ©ussie, redirection vers sÃ©lection hÃ´pital');
         navigate('/select-hopital');
       } else {
-        // Erreur (ex: utilisateur non trouvé, mot de passe incorrect)
-        alert(data.message || "Erreur de connexion");
+        // Erreur (ex: utilisateur non trouvÃ©, mot de passe incorrect)
+        setLoginError(data.message || "Erreur de connexion");
       }
     } catch (error) {
       console.error("Erreur:", error);
-      // Mode démo de secours si le backend est éteint
-      if (window.confirm("Le serveur (port 5000) est inaccessible. Voulez-vous entrer en mode DÉMO pour tester l'interface ?")) {
+      setLoginError("Impossible de se connecter au serveur. VÃ©rifiez votre connexion.");
+      // Mode dÃ©mo de secours si le backend est Ã©teint
+      if (window.confirm("Le serveur (port 5000) est inaccessible. Voulez-vous entrer en mode DÃ‰MO pour tester l'interface ?")) {
         localStorage.setItem('token', 'demo-token');
         localStorage.setItem('patientName', 'Patient Test');
         localStorage.setItem('user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
         localStorage.setItem('patient_user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
-        console.log('Mode démo activé, redirection vers sélection hôpital');
+        console.log('Mode dÃ©mo activÃ©, redirection vers sÃ©lection hÃ´pital');
         navigate('/select-hopital');
       }
     }
@@ -99,8 +102,8 @@ export default function AuthScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Compte créé avec succès ! Veuillez vous connecter.");
-        // On vide les champs pour inviter à la connexion
+        alert("Compte crÃ©Ã© avec succÃ¨s ! Veuillez vous connecter.");
+        // On vide les champs pour inviter Ã  la connexion
         setSignupName('');
         setSignupEmail('');
         setSignupPassword('');
@@ -125,7 +128,7 @@ export default function AuthScreen() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">HealthConnect</h1>
-              <p className="text-sm text-gray-600">Votre santé, notre priorité</p>
+              <p className="text-sm text-gray-600">Votre santÃ©, notre prioritÃ©</p>
             </div>
           </div>
           
@@ -135,8 +138,8 @@ export default function AuthScreen() {
                 <Stethoscope className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">Médecins experts</h3>
-                <p className="text-sm text-gray-600">Accès aux meilleurs professionnels de santé</p>
+                <h3 className="font-semibold text-gray-900">MÃ©decins experts</h3>
+                <p className="text-sm text-gray-600">AccÃ¨s aux meilleurs professionnels de santÃ©</p>
               </div>
             </div>
             
@@ -171,7 +174,7 @@ export default function AuthScreen() {
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl text-center">Bienvenue</CardTitle>
             <CardDescription className="text-center">
-              Connectez-vous à votre compte ou créez-en un nouveau
+              Connectez-vous Ã  votre compte ou crÃ©ez-en un nouveau
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -183,6 +186,14 @@ export default function AuthScreen() {
               
               <TabsContent value="login" className="space-y-4">
                 <form onSubmit={handleLogin} className="space-y-4">
+                  {loginError && (
+                    <div className="rounded-2xl border border-red-200/80 bg-red-50/80 px-4 py-3 text-sm text-red-700 shadow-sm">
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 text-red-500" />
+                        <span>{loginError}</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email</Label>
                     <div className="relative">
@@ -206,7 +217,7 @@ export default function AuthScreen() {
                       <Input
                         id="login-password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                         className="pl-10 bg-input-background border-gray-200 focus:border-primary"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
@@ -221,7 +232,7 @@ export default function AuthScreen() {
                   
                   <p className="text-center text-sm text-muted-foreground">
                     <a href="#" className="text-primary hover:underline">
-                      Mot de passe oublié ?
+                      Mot de passe oubliÃ© ?
                     </a>
                   </p>
                 </form>
@@ -262,7 +273,7 @@ export default function AuthScreen() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="signup-phone">Numéro de téléphone</Label>
+                    <Label htmlFor="signup-phone">NumÃ©ro de tÃ©lÃ©phone</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                       <Input
@@ -284,7 +295,7 @@ export default function AuthScreen() {
                       <Input
                         id="signup-password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                         className="pl-10 bg-input-background border-gray-200 focus:border-primary"
                         value={signupPassword}
                         onChange={(e) => setSignupPassword(e.target.value)}
@@ -294,11 +305,11 @@ export default function AuthScreen() {
                   </div>
                   
                   <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white shadow-md">
-                    Créer un compte
+                    CrÃ©er un compte
                   </Button>
                   
                   <p className="text-center text-xs text-muted-foreground">
-                    En vous inscrivant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité
+                    En vous inscrivant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialitÃ©
                   </p>
                 </form>
               </TabsContent>
