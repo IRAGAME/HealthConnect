@@ -9,6 +9,9 @@ const hospitalRoutes = require('./routes/hospitalRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const doctorRoutes = require('./routes/doctorRoutes');
 const specialtyRoutes = require('./routes/specialtyRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+
 
 const PORT = process.env.PORT || 5000;
 const app=express()
@@ -25,7 +28,8 @@ app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/specialties', specialtyRoutes);
-
+app.use('/api/appointment',appointmentRoutes);
+app.use('/api/notifications',notificationRoutes);
 // --- Données de l'API (simule une base de données en attendant la connexion à PostgreSQL) ---
 
 // --- Route de l'API ---

@@ -84,22 +84,46 @@ export default function BookAppointmentScreen() {
 
   const isFormComplete = selectedDepartment && selectedDoctor && selectedDate && selectedTime;
 
-  const handleConfirmAppointment = () => {
-    if (isFormComplete) {
-      const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
-      const newAppointment = {
-        id: Date.now().toString(),
-        department: selectedDepartment,
-        doctor: doctorsList.find(d => d.doctor_id.toString() === selectedDoctor)?.nom,
-        medicalCondition,
-        medicalDescription,
-        date: format(selectedDate, 'd MMM yyyy', { locale: fr }),
-        time: selectedTime,
-        status: 'Confirmé',
-      };
-      appointments.push(newAppointment);
-      localStorage.setItem('appointments', JSON.stringify(appointments));
-      navigate('/appointments');
+  const handleConfirmAppointment = async () => {
+    if (isFormComplete && selectedDate) {
+      try {
+        // Récupération de l'ID du patient depuis le stockage local (après login)
+        const userInfoStr = localStorage.getItem('userInfo');
+        const userInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
+        const patientId = userInfo?.id;
+
+        if (!patientId) {
+          alert("Veuillez vous connecter pour prendre rendez-vous.");
+          return;
+        }
+
+        // Combinaison de la date et de l'heure pour le format TIMESTAMP
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        const appointmentDateTime = new Date(selectedDate);
+        appointmentDateTime.setHours(hours, minutes);
+
+        const response = await fetch('http://localhost:5000/api/appointment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            patient_id: patientId,
+            docteur_id: parseInt(selectedDoctor),
+            date: appointmentDateTime.toISOString(),
+            medical_condition: medicalCondition,
+            medical_description: medicalDescription
+          }),
+        });
+
+        if (response.ok) {
+          navigate('/appointments');
+        } else {
+          const errorData = await response.json();
+          alert(`Erreur: ${errorData.error || 'Impossible de prendre le rendez-vous'}`);
+        }
+      } catch (error) {
+        console.error("Erreur réseau:", error);
+        alert("Erreur de connexion au serveur.");
+      }
     }
   };
 
