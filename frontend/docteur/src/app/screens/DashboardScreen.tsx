@@ -13,6 +13,15 @@ function DoctorDashboard() {
   const { appointments, patients } = useDoctor();
   const { unreadCount } = useNotification();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const authAppUrl = 'http://localhost:5175';
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('doctor_theme');
+    window.location.assign(authAppUrl);
+  };
 
   const todayAppointments = appointments.filter(apt => apt.date === new Date().toISOString().split('T')[0]);
   const completedAppointments = appointments.filter(apt => apt.status === 'completed').length;
@@ -98,7 +107,7 @@ function DoctorDashboard() {
 
               {/* Logout */}
               <button
-                onClick={() => navigate('/')}
+                onClick={handleLogout}
                 className={`p-2 rounded-lg ${isDark ? 'bg-red-900/20 text-red-400 hover:bg-red-900/40' : 'bg-red-100 text-red-600 hover:bg-red-200'}`}
               >
                 <LogOut className="w-5 h-5" />

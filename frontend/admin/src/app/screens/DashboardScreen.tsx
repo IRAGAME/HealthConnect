@@ -9,6 +9,15 @@ function DashboardScreen() {
   const { isDark, toggleTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const authAppUrl = 'http://localhost:5175';
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('admin_theme');
+    window.location.assign(authAppUrl);
+  };
 
   const stats = [
     { label: t('stats.totalUsers'), value: '1,280', icon: '👥', color: 'bg-blue-500' },
@@ -79,7 +88,7 @@ function DashboardScreen() {
 
               {/* Logout */}
               <button
-                onClick={() => navigate('/')}
+                onClick={handleLogout}
                 className={`p-2 rounded-lg ${isDark ? 'bg-red-900/20 text-red-400 hover:bg-red-900/40' : 'bg-red-100 text-red-600 hover:bg-red-200'}`}
               >
                 <LogOut className="w-5 h-5" />

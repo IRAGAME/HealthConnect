@@ -9,6 +9,15 @@ export default function DashboardScreen() {
   const { isDark, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const { appointments, rooms } = useReception();
+  const authAppUrl = 'http://localhost:5175';
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    localStorage.removeItem('reception_theme');
+    window.location.assign(authAppUrl);
+  };
 
   const todayAppointments = appointments.length;
   const checkedIn = appointments.filter((a) => a.status !== 'waiting').length;
@@ -49,7 +58,7 @@ export default function DashboardScreen() {
               </button>
 
               <button
-                onClick={() => navigate('/')}
+                onClick={handleLogout}
                 className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
               >
                 <LogOut className="w-5 h-5" />
