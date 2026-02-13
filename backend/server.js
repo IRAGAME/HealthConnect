@@ -11,6 +11,7 @@ const doctorRoutes = require('./routes/doctorRoutes');
 const specialtyRoutes = require('./routes/specialtyRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const receptionistRoutes = require('./routes/receptionistRoutes');
 
 
 const PORT = process.env.PORT || 5000;
@@ -44,6 +45,7 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/specialties', specialtyRoutes);
 app.use('/api/appointment',appointmentRoutes);
 app.use('/api/notifications',notificationRoutes);
+app.use('/api/receptionists', receptionistRoutes);
 // --- Données de l'API (simule une base de données en attendant la connexion à PostgreSQL) ---
 
 // --- Route de l'API ---
