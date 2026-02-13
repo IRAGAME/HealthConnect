@@ -16,8 +16,22 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const PORT = process.env.PORT || 5000;
 const app=express()
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:5176',
+  'http://localhost:5177',
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173' 
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin non autorisee: ${origin}`));
+  },
+  credentials: true,
 }));
 
 app.use(express.json()); // Permet au serveur de comprendre le JSON envoyé par le client

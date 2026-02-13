@@ -1,11 +1,9 @@
-import tailwindcss from 'tailwindcss';
-import defaultConfig from 'tailwindcss/defaultConfig';
+import { Config } from 'tailwindcss';
 
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {},
   },
-  darkMode: 'class',
   plugins: [],
-};
+} satisfies Config;

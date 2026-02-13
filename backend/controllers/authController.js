@@ -1,34 +1,38 @@
 // c:\Users\mugis\Desktop\HealthConnect\backend\controllers\authController.js
-const db = require('../config/db'); // Votre configuration DB
+const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.registerPatient = async (req, res) => {
-  const { nom, email,telephone,motdepasse} = req.body;
+  const { nom, email, telephone, motdepasse } = req.body;
   try {
-    // Vérification si l'email existe déjà
     const userCheck = await db.query('SELECT * FROM patients WHERE email = $1', [email]);
     if (userCheck.rows.length > 0) {
-      return res.status(400).json({ message: "Cet email est déjà utilisé." });
+      return res.status(400).json({ message: "Cet email est deja utilise." });
     }
 
     const hashedPassword = await bcrypt.hash(motdepasse, 10);
     const newUser = await db.query(
+<<<<<<< HEAD
+      'INSERT INTO patients (nom, email, numero, motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, numero',
+      [nom, email, telephone, hashedPassword]
+=======
       'INSERT INTO patients (nom, email, telephone, motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, telephone',
       [nom, email, telephone,hashedPassword]
+>>>>>>> 9d4a6065b6cf351da41ccc3888b6f4c7c8add112
     );
     res.status(201).json(newUser.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
+};
 
 exports.registerStaff = async (req, res) => {
-  const { nom, email, motdepasse, role, specialite } = req.body;
+  const { nom, email, motdepasse, role } = req.body;
   try {
     const userCheck = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userCheck.rows.length > 0) {
-      return res.status(400).json({ message: "Cet email est déjà utilisé." });
+      return res.status(400).json({ message: "Cet email est deja utilise." });
     }
 
     const hashedPassword = await bcrypt.hash(motdepasse, 10);
@@ -42,32 +46,72 @@ exports.registerStaff = async (req, res) => {
   }
 };
 
+const normalizeRole = (role) => {
+  if (!role) return null;
+  const value = String(role).toLowerCase();
+
+  if (value === 'docteur' || value === 'doctor') return 'doctor';
+  if (value === 'reception' || value === 'receptionniste') return 'reception';
+  if (value === 'admin') return 'admin';
+  if (value === 'patient') return 'patient';
+
+  return value;
+};
+
 exports.login = async (req, res) => {
-  const { email, motdepasse } = req.body;
+  const { email, motdepasse, role } = req.body;
+
   try {
-    // 1. Trouver l'utilisateur
-    const userResult = await db.query('SELECT * FROM patients WHERE email = $1', [email]);
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    if (!email || !motdepasse) {
+      return res.status(400).json({ message: 'Email et mot de passe sont obligatoires' });
     }
 
-    const patient = userResult.rows[0];
+    const requestedRole = normalizeRole(role);
+    let user = null;
+    let userRole = requestedRole || null;
 
-    // 2. Comparer le mot de passe
-    const validPass = await bcrypt.compare(motdepasse, patient.motdepasse);
+    if (requestedRole === 'patient') {
+      const patientResult = await db.query('SELECT * FROM patients WHERE email = $1', [email]);
+      if (patientResult.rows.length > 0) {
+        user = patientResult.rows[0];
+        userRole = 'patient';
+      }
+    } else {
+      const staffResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      if (staffResult.rows.length > 0) {
+        user = staffResult.rows[0];
+        userRole = normalizeRole(user.role) || user.role;
+      }
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouve' });
+    }
+
+    if (requestedRole && userRole !== requestedRole) {
+      return res.status(403).json({ message: "Ce compte n'a pas ce role" });
+    }
+
+    const validPass = await bcrypt.compare(motdepasse, user.motdepasse);
     if (!validPass) {
-      return res.status(401).json({ message: "Mot de passe incorrect" });
+      return res.status(401).json({ message: 'Mot de passe incorrect' });
     }
 
-    // 3. Créer le token JWT
     const token = jwt.sign(
-      { id: patient.id, role: 'patient' }, // On assigne le rôle 'patient' manuellement
+      { id: user.id, role: userRole || 'user' },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // 4. Renvoyer le token et les informations de l'utilisateur
-    res.json({ token, user: { id: patient.id, nom: patient.nom, email: patient.email, role: 'patient' } });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        nom: user.nom,
+        email: user.email,
+        role: userRole || user.role || 'user',
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
