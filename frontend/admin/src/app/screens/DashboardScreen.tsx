@@ -2,28 +2,55 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { Moon, Sun, Globe, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function DashboardScreen() {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const authAppUrl = 'http://localhost:5175';
+  const [dashboardStats, setDashboardStats] = useState({
+    totalUsers: 0,
+    totalAppointments: 0,
+    todayAppointments: 0,
+    pendingAppointments: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        const hospitalId = user?.hospital_id;
+
+        let url = 'http://localhost:5000/api/dashboard/stats';
+        if (hospitalId) url += `?hospitalId=${hospitalId}`;
+
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          setDashboardStats(data);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des statistiques:", error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     localStorage.removeItem('admin_theme');
-    window.location.assign(authAppUrl);
+    navigate('/');
   };
 
   const stats = [
-    { label: t('stats.totalUsers'), value: '1,280', icon: '👥', color: 'bg-blue-500' },
-    { label: t('stats.totalAppointments'), value: '620', icon: '📅', color: 'bg-green-500' },
-    { label: t('stats.todayAppointments'), value: '12', icon: '🕐', color: 'bg-orange-500' },
-    { label: t('stats.pendingAppointments'), value: '23', icon: '⏳', color: 'bg-red-500' },
+    { label: t('stats.totalUsers'), value: dashboardStats.totalUsers.toLocaleString(), icon: '👥', color: 'bg-blue-500' },
+    { label: t('stats.totalAppointments'), value: dashboardStats.totalAppointments.toLocaleString(), icon: '📅', color: 'bg-green-500' },
+    { label: t('stats.todayAppointments'), value: dashboardStats.todayAppointments.toLocaleString(), icon: '🕐', color: 'bg-orange-500' },
+    { label: t('stats.pendingAppointments'), value: dashboardStats.pendingAppointments.toLocaleString(), icon: '⏳', color: 'bg-red-500' },
   ];
 
   return (

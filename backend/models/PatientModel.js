@@ -1,13 +1,15 @@
 const pool = require('../config/db');
+const bcrypt = require('bcrypt');
 
 class User {
   // Créer un compte patient 
   static async create(nom, email,telephone,motdepasse) {
+    const hashedPassword = await bcrypt.hash(motdepasse, 10);
     const query = `
       INSERT INTO patients (nom, email, telephone, motdepasse) 
       VALUES ($1, $2, $3, $4) 
       RETURNING *`;
-    const values = [nom, email, telephone, motdepasse];
+    const values = [nom, email, telephone, hashedPassword];
 
     try {
       const { rows } = await pool.query(query, values);

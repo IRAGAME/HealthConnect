@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Appointment {
   id: string;
@@ -14,60 +14,75 @@ interface Appointment {
   status: 'en attente' | 'confirmé' | 'terminé' | 'annulé';
 }
 
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    patient: 'Jean Dupont',
-    doctor: 'Dr. Marie Martin',
-    date: '2024-02-10',
-    time: '10:00',
-    department: 'Cardiologie',
-    status: 'en attente',
-  },
-  {
-    id: '2',
-    patient: 'Pierre Bernard',
-    doctor: 'Dr. Jean Leclerc',
-    date: '2024-02-10',
-    time: '14:00',
-    department: 'Dermatologie',
-    status: 'en attente',
-  },
-  {
-    id: '3',
-    patient: 'Marie Claire',
-    doctor: 'Dr. Marie Martin',
-    date: '2024-02-11',
-    time: '11:00',
-    department: 'Pédiatrie',
-    status: 'confirmé',
-  },
-];
-
 export default function AppointmentsScreen() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const hospitalId = user?.hospital_id;
+
+    let url = 'http://localhost:5000/api/appointments';
+    if (hospitalId) url += `?hospitalId=${hospitalId}`;
+
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error("Erreur réseau");
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setAppointments(data);
+        } else {
+          console.error("Format de données incorrect reçu:", data);
+          setAppointments([]);
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Erreur chargement RDV:", err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const updateStatus = async (id: string, newStatus: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/appointments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        setAppointments((prev) =>
+          prev.map((app) =>
+            app.id === id ? { ...app, status: newStatus as any } : app
+          )
+        );
+      } else {
+        console.error("Erreur lors de la mise à jour du statut");
+      }
+    } catch (error) {
+      console.error("Erreur réseau:", error);
+    }
+  };
 
   const validateAppointment = (id: string) => {
-    setAppointments((prev) =>
-      prev.map((app) =>
-        app.id === id ? { ...app, status: 'confirmé' as const } : app
-      )
-    );
+    updateStatus(id, 'Confirmé');
   };
 
   const rejectAppointment = (id: string) => {
-    setAppointments((prev) =>
-      prev.map((app) =>
-        app.id === id ? { ...app, status: 'annulé' as const } : app
-      )
-    );
+    if (window.confirm("Êtes-vous sûr de vouloir annuler ce rendez-vous ?")) {
+      updateStatus(id, 'Annulé');
+    }
   };
 
   const getStatusBadgeColor = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'en attente':
         return isDark ? 'bg-yellow-900/30 text-yellow-400' : 'bg-yellow-100 text-yellow-800';
       case 'confirmé':
@@ -98,7 +113,7 @@ export default function AppointmentsScreen() {
                 {t('appointments.title')}
               </h1>
               <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                {appointments.filter((a) => a.status === 'en attente').length} en attente de validation
+                {appointments.filter((a) => a.status?.toLowerCase() === 'en attente').length} en attente de validation
               </p>
             </div>
           </div>
@@ -107,6 +122,9 @@ export default function AppointmentsScreen() {
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {isLoading ? (
+          <div className="text-center py-10">Chargement des rendez-vous...</div>
+        ) : (
         <div className="grid gap-4">
           {appointments.map((appointment) => (
             <div
@@ -156,7 +174,7 @@ export default function AppointmentsScreen() {
               </div>
 
               {/* Actions */}
-              {appointment.status === 'en attente' && (
+              {appointment.status?.toLowerCase() === 'en attente' && (
                 <div className="flex gap-2">
                   <button
                     onClick={() => validateAppointment(appointment.id)}
@@ -177,8 +195,9 @@ export default function AppointmentsScreen() {
             </div>
           ))}
         </div>
+        )}
 
-        {appointments.length === 0 && (
+        {!isLoading && appointments.length === 0 && (
           <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-900/60' : 'bg-gray-50'}`}>
             <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
               Aucun rendez-vous trouvé

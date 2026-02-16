@@ -88,8 +88,8 @@ export default function BookAppointmentScreen() {
     if (isFormComplete && selectedDate) {
       try {
         // Récupération de l'ID du patient depuis le stockage local (après login)
-        const userInfoStr = localStorage.getItem('userInfo');
-        const userInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
+        const patientUserStr = localStorage.getItem('patient_user');
+        const userInfo = patientUserStr ? JSON.parse(patientUserStr) : null;
         const patientId = userInfo?.id;
 
         if (!patientId) {
@@ -102,7 +102,7 @@ export default function BookAppointmentScreen() {
         const appointmentDateTime = new Date(selectedDate);
         appointmentDateTime.setHours(hours, minutes);
 
-        const response = await fetch('http://localhost:5000/api/appointment', {
+        const response = await fetch('http://localhost:5000/api/appointments', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

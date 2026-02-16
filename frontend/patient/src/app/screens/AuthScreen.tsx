@@ -18,28 +18,7 @@ export default function AuthScreen() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
-    // VÃ©rifier si une redirection avec utilisateur authentifiÃ© est prÃ©sente dans l'URL
-    const searchParams = new URLSearchParams(window.location.search);
-    const authUserParam = searchParams.get('auth_user');
-
-    if (authUserParam) {
-      localStorage.clear(); // Nettoyer le localStorage avant de rediriger
-      try {
-        const parsedUser = JSON.parse(decodeURIComponent(authUserParam));
-        localStorage.setItem('patient_user', JSON.stringify(parsedUser));
-        localStorage.setItem('patientName', parsedUser.name);
-        navigate('/select-hopital');
-        return;
-      } catch (error) {
-        // Afficher un message d'erreur pour aider Ã  dÃ©bugger
-        console.error("Erreur lors de l'analyse des donnÃ©es de l'utilisateur:", error);
-        alert("Une erreur s'est produite lors de la connexion. Veuillez rÃ©essayer.");
-
-        console.error("Erreur lors de l'analyse de l'utilisateur authentifiÃ©", error);
-      }
-    }
-
-    // VÃ©rifier si une session existe dÃ©jÃ 
+    // Vérifier si une session existe déjà
     const savedUser = localStorage.getItem('patient_user');
     if (savedUser) {
       navigate('/select-hopital');
@@ -50,36 +29,36 @@ export default function AuthScreen() {
     e.preventDefault();
     setLoginError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/auth', {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginEmail, motdepasse: loginPassword }),
+        body: JSON.stringify({ email: loginEmail, motdepasse: loginPassword, role: 'patient' }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Connexion rÃ©ussie : on stocke le token et les infos
+        // Connexion réussie : on stocke le token et les infos
         localStorage.setItem('token', data.token);
         localStorage.setItem('patientName', data.user.nom);
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('patient_user', JSON.stringify(data.user));
-        console.log('Connexion rÃ©ussie, redirection vers sÃ©lection hÃ´pital');
+        console.log('Connexion réussie, redirection vers sélection hôpital');
         navigate('/select-hopital');
       } else {
-        // Erreur (ex: utilisateur non trouvÃ©, mot de passe incorrect)
+        // Erreur (ex: utilisateur non trouvé, mot de passe incorrect)
         setLoginError(data.message || "Erreur de connexion");
       }
     } catch (error) {
       console.error("Erreur:", error);
-      setLoginError("Impossible de se connecter au serveur. VÃ©rifiez votre connexion.");
-      // Mode dÃ©mo de secours si le backend est Ã©teint
-      if (window.confirm("Le serveur (port 5000) est inaccessible. Voulez-vous entrer en mode DÃ‰MO pour tester l'interface ?")) {
+      setLoginError("Impossible de se connecter au serveur. Vérifiez votre connexion.");
+      // Mode démo de secours si le backend est éteint
+      if (window.confirm("Le serveur (port 5000) est inaccessible. Voulez-vous entrer en mode DÉMO pour tester l'interface ?")) {
         localStorage.setItem('token', 'demo-token');
         localStorage.setItem('patientName', 'Patient Test');
         localStorage.setItem('user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
         localStorage.setItem('patient_user', JSON.stringify({ nom: 'Patient Test', email: loginEmail }));
-        console.log('Mode dÃ©mo activÃ©, redirection vers sÃ©lection hÃ´pital');
+        console.log('Mode démo activé, redirection vers sélection hôpital');
         navigate('/select-hopital');
       }
     }
@@ -102,8 +81,8 @@ export default function AuthScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Compte crÃ©Ã© avec succÃ¨s ! Veuillez vous connecter.");
-        // On vide les champs pour inviter Ã  la connexion
+        alert("Compte créé avec succès ! Veuillez vous connecter.");
+        // On vide les champs pour inviter à la connexion
         setSignupName('');
         setSignupEmail('');
         setSignupPassword('');
@@ -128,7 +107,7 @@ export default function AuthScreen() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">HealthConnect</h1>
-              <p className="text-sm text-gray-600">Votre santÃ©, notre prioritÃ©</p>
+              <p className="text-sm text-gray-600">Votre santé, notre priorité</p>
             </div>
           </div>
           
@@ -138,8 +117,8 @@ export default function AuthScreen() {
                 <Stethoscope className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">MÃ©decins experts</h3>
-                <p className="text-sm text-gray-600">AccÃ¨s aux meilleurs professionnels de santÃ©</p>
+                <h3 className="font-semibold text-gray-900">Médecins experts</h3>
+                <p className="text-sm text-gray-600">Accès aux meilleurs professionnels de santé</p>
               </div>
             </div>
             
@@ -174,7 +153,7 @@ export default function AuthScreen() {
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl text-center">Bienvenue</CardTitle>
             <CardDescription className="text-center">
-              Connectez-vous Ã  votre compte ou crÃ©ez-en un nouveau
+              Connectez-vous à votre compte ou créez-en un nouveau
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -217,7 +196,7 @@ export default function AuthScreen() {
                       <Input
                         id="login-password"
                         type="password"
-                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                        placeholder="••••••••"
                         className="pl-10 bg-input-background border-gray-200 focus:border-primary"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
@@ -232,7 +211,7 @@ export default function AuthScreen() {
                   
                   <p className="text-center text-sm text-muted-foreground">
                     <a href="#" className="text-primary hover:underline">
-                      Mot de passe oubliÃ© ?
+                      Mot de passe oublié ?
                     </a>
                   </p>
                 </form>
@@ -273,7 +252,7 @@ export default function AuthScreen() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="signup-phone">NumÃ©ro de tÃ©lÃ©phone</Label>
+                    <Label htmlFor="signup-phone">Numéro de téléphone</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                       <Input
@@ -295,7 +274,7 @@ export default function AuthScreen() {
                       <Input
                         id="signup-password"
                         type="password"
-                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                        placeholder="••••••••"
                         className="pl-10 bg-input-background border-gray-200 focus:border-primary"
                         value={signupPassword}
                         onChange={(e) => setSignupPassword(e.target.value)}
@@ -305,11 +284,11 @@ export default function AuthScreen() {
                   </div>
                   
                   <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white shadow-md">
-                    CrÃ©er un compte
+                    Créer un compte
                   </Button>
                   
                   <p className="text-center text-xs text-muted-foreground">
-                    En vous inscrivant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialitÃ©
+                    En vous inscrivant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité
                   </p>
                 </form>
               </TabsContent>

@@ -14,7 +14,7 @@ exports.registerPatient = async (req, res) => {
     const hashedPassword = await bcrypt.hash(motdepasse, 10);
     const newUser = await db.query(
       'INSERT INTO patients (nom, email, telephone, motdepasse) VALUES ($1, $2, $3, $4) RETURNING id, nom, email, telephone',
-      [nom, email, telephone,hashedPassword]
+      [nom, email, telephone, hashedPassword]
     );
     res.status(201).json(newUser.rows[0]);
   } catch (err) {
@@ -65,17 +65,18 @@ exports.login = async (req, res) => {
     let user = null;
     let userRole = requestedRole || null;
 
-    if (requestedRole === 'patient') {
+    // 1. Chercher d'abord dans la table USERS (Staff)
+    const staffResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (staffResult.rows.length > 0) {
+      user = staffResult.rows[0];
+      userRole = normalizeRole(user.role) || user.role;
+    }
+    // 2. Si non trouvé, chercher dans la table PATIENTS
+    else {
       const patientResult = await db.query('SELECT * FROM patients WHERE email = $1', [email]);
       if (patientResult.rows.length > 0) {
         user = patientResult.rows[0];
         userRole = 'patient';
-      }
-    } else {
-      const staffResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
-      if (staffResult.rows.length > 0) {
-        user = staffResult.rows[0];
-        userRole = normalizeRole(user.role) || user.role;
       }
     }
 
@@ -98,6 +99,19 @@ exports.login = async (req, res) => {
       { expiresIn: '1h' }
     );
 
+    // Récupérer l'ID de l'hôpital pour le staff
+    let hospitalId = null;
+    if (userRole === 'admin') {
+      const resH = await db.query('SELECT hospital_id FROM admin WHERE user_id = $1', [user.id]);
+      if (resH.rows.length > 0) hospitalId = resH.rows[0].hospital_id;
+    } else if (userRole === 'doctor') {
+      const resH = await db.query('SELECT hospital_id FROM docteur WHERE user_id = $1', [user.id]);
+      if (resH.rows.length > 0) hospitalId = resH.rows[0].hospital_id;
+    } else if (userRole === 'reception') {
+      const resH = await db.query('SELECT hospital_id FROM receptionniste WHERE user_id = $1', [user.id]);
+      if (resH.rows.length > 0) hospitalId = resH.rows[0].hospital_id;
+    }
+
     res.json({
       token,
       user: {
@@ -105,6 +119,7 @@ exports.login = async (req, res) => {
         nom: user.nom,
         email: user.email,
         role: userRole || user.role || 'user',
+        hospital_id: hospitalId,
       },
     });
   } catch (err) {

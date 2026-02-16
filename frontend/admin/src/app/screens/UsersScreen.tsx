@@ -1,14 +1,41 @@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { useAdmin } from '@/app/contexts/AdminContext';
 import { ArrowLeft, Plus, Edit2, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function UsersScreen() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { t } = useLanguage();
-  const { users, deleteUser } = useAdmin();
+  const [users, setUsers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error("Erreur chargement utilisateurs:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const deleteUser = async (id: string) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+      await fetch(`http://localhost:5000/api/users/${id}`, { method: 'DELETE' });
+      // Recharger la liste
+      fetchUsers();
+    }
+  };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -74,8 +101,11 @@ export default function UsersScreen() {
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Users Table */}
+        {isLoading ? (
+          <div className="text-center py-10">Chargement des utilisateurs...</div>
+        ) : (
         <div className={`rounded-lg shadow-md overflow-hidden ${isDark ? 'bg-slate-900/60 border border-cyan-900/30' : 'bg-white border border-gray-200'}`}>
+          {/* Users Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -113,16 +143,16 @@ export default function UsersScreen() {
                       {user.email}
                     </td>
                     <td className={`px-6 py-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {user.phone}
+                      {user.telephone}
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.rôle)}`}>
-                        {user.rôle}
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
+                        {user.role}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(user.statut)}`}>
-                        {user.statut}
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(user.statut || 'actif')}`}>
+                        {user.statut || 'actif'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -144,8 +174,9 @@ export default function UsersScreen() {
             </table>
           </div>
         </div>
+        )}
 
-        {users.length === 0 && (
+        {!isLoading && users.length === 0 && (
           <div className={`text-center py-12 rounded-lg ${isDark ? 'bg-slate-900/60' : 'bg-gray-50'}`}>
             <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
               Aucun utilisateur trouvé

@@ -25,8 +25,15 @@ export default function AppointmentsScreen() {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const userId = localStorage.getItem('userId');
-      if (!userId) return;
+      // Récupération correcte de l'ID depuis l'objet patient_user
+      const patientUserStr = localStorage.getItem('patient_user');
+      const userInfo = patientUserStr ? JSON.parse(patientUserStr) : null;
+      const userId = userInfo?.id;
+
+      if (!userId) {
+        console.log("Utilisateur non connecté ou ID introuvable");
+        return;
+      }
 
       try {
         const response = await fetch(`http://localhost:5000/api/appointments/patient/${userId}`);

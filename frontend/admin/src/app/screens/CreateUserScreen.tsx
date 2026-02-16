@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, User, Mail, Lock, Building, Stethoscope, Phone, Briefcase } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import { useAdmin } from '@/app/contexts/AdminContext';
 
 export default function CreateUserScreen() {
   const navigate = useNavigate();
-  const { addUser, users } = useAdmin();
   const { isDark } = useTheme();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -27,7 +25,7 @@ export default function CreateUserScreen() {
     { id: '3', name: 'Clinique Lumière' }
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -37,28 +35,49 @@ export default function CreateUserScreen() {
       return;
     }
 
-    const existing = users.find((u) => u.email.toLowerCase() === formData.email.toLowerCase());
-    if (existing) {
-      setError('Un utilisateur avec cet email existe déjà.');
-      return;
+    try {
+      let url = '';
+      let body = {};
+
+      if (formData.role === 'doctor') {
+        url = 'http://localhost:5000/api/doctors';
+        body = {
+          nom: formData.name,
+          email: formData.email,
+          motdepasse: formData.password,
+          telephone: formData.phone,
+          hospital_id: formData.hospitalId,
+          specialite: formData.specialty
+        };
+      } else {
+        url = 'http://localhost:5000/api/receptionists';
+        body = {
+          nom: formData.name,
+          email: formData.email,
+          motdepasse: formData.password,
+          telephone: formData.phone,
+          hospital_id: formData.hospitalId
+        };
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || "Erreur lors de la création");
+      }
+
+      setSuccess(`L'utilisateur ${formData.name} a été créé avec succès.`);
+      setTimeout(() => navigate('/users'), 1500);
+
+    } catch (err: any) {
+      setError(err.message || "Une erreur est survenue");
     }
-
-    const finalName = formData.role === 'doctor' && formData.specialty
-      ? `${formData.name} (${formData.specialty})`
-      : formData.name;
-
-    addUser({
-      id: Date.now().toString(),
-      nom: finalName,
-      email: formData.email,
-      phone: formData.phone || '',
-      rôle: formData.role === 'doctor' ? 'médecin' : 'reception',
-      statut: 'actif',
-      dateInscription: new Date().toISOString().slice(0, 10),
-    });
-
-    setSuccess(`L'utilisateur ${formData.name} a été créé avec succès.`);
-    setTimeout(() => navigate('/users'), 1500);
   };
 
   return (

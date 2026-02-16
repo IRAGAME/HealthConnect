@@ -4,77 +4,82 @@ import { useAdmin } from '@/app/contexts/AdminContext';
 import { Stethoscope, Calendar, User, Check, X, Search, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface Appointment {
   id: string;
-  patientName: string;
+  patient: string; // Modifié pour correspondre à l'API (patient au lieu de patientName)
   date: string;
   time: string;
   department: string;
   status: string;
-  assignedDoctor?: string;
+  doctor?: string; // Modifié pour correspondre à l'API
+  docteur_id?: number;
 }
-
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    patientName: 'Jean Dupont',
-    date: '2026-02-10',
-    time: '09:00',
-    department: 'Cardiologie',
-    status: 'pending',
-  },
-  {
-    id: '2',
-    patientName: 'Marie Claude',
-    date: '2026-02-10',
-    time: '10:30',
-    department: 'Dermatologie',
-    status: 'pending',
-    assignedDoctor: 'Dr. Sophie Martin'
-  },
-  {
-    id: '3',
-    patientName: 'Paul Henri',
-    date: '2026-02-11',
-    time: '14:00',
-    department: 'Orthopédie',
-    status: 'pending',
-  },
-];
-
-const mockDoctors = [
-  { id: '1', name: 'Dr. Marie Leblanc', specialty: 'Cardiologie' },
-  { id: '2', name: 'Dr. Sophie Martin', specialty: 'Dermatologie' },
-  { id: '3', name: 'Dr. Jean Rousseau', specialty: 'Orthopédie' },
-  { id: '4', name: 'Dr. Pierre Dupuis', specialty: 'Cardiologie' },
-  { id: '5', name: 'Dr. Isabelle Moreau', specialty: 'Pneumologie' },
-];
 
 export default function AssignAppointmentsScreen() {
   const { t } = useLanguage();
   const { isDark } = useTheme();
   const navigate = useNavigate();
-  const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [doctors, setDoctors] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
   const [selectedDoctor, setSelectedDoctor] = useState<string>('');
 
+  useEffect(() => {
+    // Charger les rendez-vous
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const hospitalId = user?.hospital_id;
+    let url = 'http://localhost:5000/api/appointments';
+    if (hospitalId) url += `?hospitalId=${hospitalId}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => setAppointments(data))
+      .catch(err => console.error("Erreur chargement RDV:", err));
+
+    // Charger les médecins
+    fetch('http://localhost:5000/api/doctors')
+      .then(res => res.json())
+      .then(data => {
+        // Filtrer par hôpital si nécessaire
+        const filteredDocs = hospitalId ? data.filter((d: any) => d.hospital_id == hospitalId) : data;
+        setDoctors(filteredDocs);
+      })
+      .catch(err => console.error("Erreur chargement médecins:", err));
+  }, []);
+
   const filteredAppointments = appointments.filter(apt =>
-    apt.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    apt.department.toLowerCase().includes(searchTerm.toLowerCase())
+    (apt.patient && apt.patient.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (apt.department && apt.department.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleAssignDoctor = (appointmentId: string, doctorName: string) => {
-    setAppointments(appointments.map(apt =>
-      apt.id === appointmentId ? { ...apt, assignedDoctor: doctorName, status: 'confirmed' } : apt
-    ));
-    setSelectedAppointmentId(null);
-    setSelectedDoctor('');
+  const handleAssignDoctor = async (appointmentId: string, doctorId: string, doctorName: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/appointments/${appointmentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ docteur_id: doctorId, status: 'Confirmé' }),
+      });
+
+      if (response.ok) {
+        setAppointments(appointments.map(apt =>
+          apt.id === appointmentId ? { ...apt, doctor: doctorName, docteur_id: parseInt(doctorId), status: 'Confirmé' } : apt
+        ));
+        setSelectedAppointmentId(null);
+        setSelectedDoctor('');
+      }
+    } catch (error) {
+      console.error("Erreur assignation:", error);
+    }
   };
 
   const getAvailableDoctors = (department: string) => {
-    return mockDoctors.filter(doc => doc.specialty === department);
+    // On peut filtrer par spécialité si on veut être strict, ou afficher tous les médecins
+    // Ici on filtre par spécialité pour être cohérent avec l'interface
+    return doctors.filter(doc => doc.specialite === department);
   };
 
   return (
@@ -130,20 +135,20 @@ export default function AssignAppointmentsScreen() {
           <StatCard
             icon={<User className="w-6 h-6" />}
             label="En Attente d'Assignment"
-            value={appointments.filter(a => !a.assignedDoctor).length.toString()}
+            value={appointments.filter(a => !a.docteur_id).length.toString()}
             isDark={isDark}
             highlight
           />
           <StatCard
             icon={<Check className="w-6 h-6" />}
             label="Assignés"
-            value={appointments.filter(a => a.assignedDoctor).length.toString()}
+            value={appointments.filter(a => a.docteur_id).length.toString()}
             isDark={isDark}
           />
           <StatCard
             icon={<Stethoscope className="w-6 h-6" />}
             label="Médecins"
-            value={mockDoctors.length.toString()}
+            value={doctors.length.toString()}
             isDark={isDark}
           />
         </div>
@@ -177,14 +182,14 @@ export default function AssignAppointmentsScreen() {
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${appointment.assignedDoctor
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${appointment.docteur_id
                           ? 'bg-green-100 text-green-800'
                           : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {appointment.assignedDoctor ? 'Assigné' : 'En attente'}
+                          {appointment.docteur_id ? 'Assigné' : 'En attente'}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold mb-2">{appointment.patientName}</h3>
+                      <h3 className="text-lg font-bold mb-2">{appointment.patient}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <p className={`text-xs font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>DATE</p>
@@ -200,7 +205,7 @@ export default function AssignAppointmentsScreen() {
                         </div>
                         <div>
                           <p className={`text-xs font-semibold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>MÉDECIN</p>
-                          <p className="font-bold">{appointment.assignedDoctor || 'Non assigné'}</p>
+                          <p className="font-bold">{appointment.doctor || 'Non assigné'}</p>
                         </div>
                       </div>
                     </div>
@@ -211,18 +216,18 @@ export default function AssignAppointmentsScreen() {
                     <div className="mt-4 p-4 rounded-lg border-2 border-purple-500 bg-purple-500/5">
                       <p className="font-bold mb-3">Sélectionnez un médecin:</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {getAvailableDoctors(appointment.department).map((doctor) => (
+                        {getAvailableDoctors(appointment.department).map((doctor: any) => (
                           <button
-                            key={doctor.id}
-                            onClick={() => handleAssignDoctor(appointment.id, doctor.name)}
-                            className={`p-3 rounded-lg text-left transition-all duration-200 ${selectedDoctor === doctor.id
+                            key={doctor.doctor_id}
+                            onClick={() => handleAssignDoctor(appointment.id, doctor.doctor_id, doctor.nom)}
+                            className={`p-3 rounded-lg text-left transition-all duration-200 ${selectedDoctor === doctor.doctor_id
                               ? 'bg-purple-500 text-white'
                               : isDark ? 'bg-slate-900/50 hover:bg-slate-600' : 'bg-gray-200 hover:bg-gray-300'
                             }`}
                           >
-                            <div className="font-semibold text-sm">{doctor.name}</div>
-                            <div className={`text-xs ${selectedDoctor === doctor.id ? 'text-purple-100' : isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                              {doctor.specialty}
+                            <div className="font-semibold text-sm">{doctor.nom}</div>
+                            <div className={`text-xs ${selectedDoctor === doctor.doctor_id ? 'text-purple-100' : isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {doctor.specialite}
                             </div>
                           </button>
                         ))}
@@ -243,16 +248,15 @@ export default function AssignAppointmentsScreen() {
                     <div className="flex justify-end mt-4">
                       <button
                         onClick={() => setSelectedAppointmentId(appointment.id)}
-                        disabled={appointment.assignedDoctor !== undefined}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${appointment.assignedDoctor
-                          ? 'bg-green-500 text-white cursor-default'
-                          : 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95'
+                        className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${appointment.docteur_id
+                          ? 'bg-blue-500 text-white hover:bg-blue-600'
+                          : 'bg-purple-500 text-white hover:bg-purple-600'
                         }`}
                       >
-                        {appointment.assignedDoctor ? (
+                        {appointment.docteur_id ? (
                           <>
                             <Check className="w-5 h-5" />
-                            Assigné
+                            Réassigner
                           </>
                         ) : (
                           t('appointments.assignDoctor')
@@ -270,19 +274,19 @@ export default function AssignAppointmentsScreen() {
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Médecins Disponibles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {mockDoctors.map((doctor) => (
+            {doctors.map((doctor: any) => (
               <div
-                key={doctor.id}
+                key={doctor.doctor_id}
                 className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-105 transform ${isDark
                   ? 'bg-slate-900/60 border-cyan-900/30 hover:border-purple-500'
                   : 'bg-white border-gray-200 hover:border-purple-500'
                 }`}
               >
                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 text-white font-bold mb-3">
-                  {doctor.name.charAt(4)}
+                  {doctor.nom.charAt(0)}
                 </div>
-                <h3 className="font-bold text-sm mb-1">{doctor.name}</h3>
-                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{doctor.specialty}</p>
+                <h3 className="font-bold text-sm mb-1">{doctor.nom}</h3>
+                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{doctor.specialite}</p>
               </div>
             ))}
           </div>

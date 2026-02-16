@@ -22,27 +22,16 @@ export default function DashboardScreen() {
 
 
   useEffect(() => {
-    // 1. Vérifier si l'utilisateur est passé via l'URL (depuis l'auth App)
-    const searchParams = new URLSearchParams(window.location.search);
-    const authUserParam = searchParams.get('auth_user');
-
-    if (authUserParam) {
-      try {
-        const parsedUser = JSON.parse(decodeURIComponent(authUserParam));
-        // Sauvegarder dans le localStorage de l'app patient
-        localStorage.setItem('patient_user', JSON.stringify(parsedUser));
-        setPatientName(parsedUser.name);
-      } catch (e) {
-        console.error("Erreur lors de la récupération de l'utilisateur", e);
-      }
-    }else{
-      const name = localStorage.getItem('patientName') || 'Patient';
-      setPatientName(name);
-    }
+    const name = localStorage.getItem('patientName') || 'Patient';
+    setPatientName(name);
 
     // Récupération des données dynamiques
     const fetchData = async () => {
-      const userId = localStorage.getItem('userId');
+      // Récupération correcte de l'ID depuis l'objet patient_user
+      const patientUserStr = localStorage.getItem('patient_user');
+      const userInfo = patientUserStr ? JSON.parse(patientUserStr) : null;
+      const userId = userInfo?.id;
+
       if (!userId) return;
 
       try {
