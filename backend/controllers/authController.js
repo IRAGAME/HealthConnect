@@ -69,7 +69,8 @@ exports.login = async (req, res) => {
     const staffResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     if (staffResult.rows.length > 0) {
       user = staffResult.rows[0];
-      userRole = normalizeRole(user.role) || user.role;
+      // On normalise le rôle venant de la BDD pour qu'il corresponde aux attentes du système (ex: 'receptionniste' -> 'reception')
+      userRole = normalizeRole(user.role); 
     }
     // 2. Si non trouvé, chercher dans la table PATIENTS
     else {
@@ -118,11 +119,15 @@ exports.login = async (req, res) => {
         id: user.id,
         nom: user.nom,
         email: user.email,
-        role: userRole || user.role || 'user',
+        role: userRole || 'user',
         hospital_id: hospitalId,
       },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+exports.logout = (req, res) => {
+  res.status(200).json({ message: 'Déconnexion réussie' });
 };

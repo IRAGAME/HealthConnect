@@ -105,7 +105,7 @@ exports.getDoctorById = async (req, res) => {
                 d.hospital_id,
                 h.nom as hospital_name
             FROM users u
-            JOIN doctors d ON u.id = d.user_id
+            JOIN docteur d ON u.id = d.user_id
             LEFT JOIN hopitaux h ON d.hospital_id = h.id
             WHERE d.id = $1 AND u.role = 'doctor'
         `, [id]);

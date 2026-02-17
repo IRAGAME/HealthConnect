@@ -17,14 +17,7 @@ exports.createAppointment = async (req, res) => {
     );
     const newAppointment = newAppointmentResult.rows[0];
 
-    // 2. Créer une notification pour le patient
-    await client.query(
-        `INSERT INTO notifications (patient_id, type, message, status)
-         VALUES ($1, 'Rendez-vous', 'Votre rendez-vous a été créé avec succès et est en attente de confirmation.', 'non_lu')`,
-        [patient_id]
-    );
-
-    // 3. Récupérer les informations pour la notification de l'admin
+    // 2. Récupérer les informations pour les notifications
     const patientInfo = await client.query('SELECT nom FROM patients WHERE id = $1', [patient_id]);
     const patientName = patientInfo.rows[0]?.nom || 'Un patient';
 
@@ -37,6 +30,18 @@ exports.createAppointment = async (req, res) => {
     );
     const doctorName = doctorInfo.rows[0]?.doctor_name || 'un docteur';
     const hospitalId = doctorInfo.rows[0]?.hospital_id;
+
+    // 3. Créer une notification dynamique pour le patient
+    const dateObj = new Date(date);
+    const dateStr = dateObj.toLocaleDateString('fr-FR');
+    const timeStr = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    const messagePatient = `Votre rendez-vous avec Dr. ${doctorName} le ${dateStr} à ${timeStr} a été créé avec succès et est en attente de confirmation.`;
+
+    await client.query(
+        `INSERT INTO notifications (patient_id, type, message, status)
+         VALUES ($1, 'Rendez-vous', $2, 'non_lu')`,
+        [patient_id, messagePatient]
+    );
 
     // 4. Si l'hôpital est trouvé, notifier les admins de cet hôpital
     if (hospitalId) {
@@ -144,11 +149,21 @@ exports.updateAppointment = async (req, res) => {
 
     // Gestion des notifications
     if (status) {
-        const message = status === 'Confirmé' 
-            ? `Votre rendez-vous du ${new Date(appointment.date).toLocaleDateString()} a été confirmé.`
-            : status === 'Annulé' 
-            ? `Votre rendez-vous du ${new Date(appointment.date).toLocaleDateString()} a été annulé.`
-            : `Le statut de votre rendez-vous a changé : ${status}.`;
+        // Récupérer le nom du docteur
+        const docInfo = await client.query(
+            `SELECT u.nom FROM docteur d JOIN users u ON d.user_id = u.id WHERE d.id = $1`,
+            [appointment.docteur_id]
+        );
+        const docName = docInfo.rows[0]?.nom || 'votre médecin';
+        const dateStr = new Date(appointment.date).toLocaleDateString('fr-FR');
+        const timeStr = new Date(appointment.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+        let message = `Le statut de votre rendez-vous a changé : ${status}.`;
+        if (status === 'Confirmé') {
+            message = `Votre rendez-vous avec Dr. ${docName} le ${dateStr} à ${timeStr} a été confirmé.`;
+        } else if (status === 'Annulé') {
+            message = `Votre rendez-vous avec Dr. ${docName} le ${dateStr} à ${timeStr} a été annulé.`;
+        }
 
         await client.query(
             `INSERT INTO notifications (patient_id, type, message, status)

@@ -109,3 +109,12 @@ INSERT INTO specialites (nom) VALUES
 ('Oncologie'),
 ('Dentisterie');
 
+-- 4. Table Urgences (Emergencies)
+CREATE TABLE emergencies (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+    type VARCHAR(100),
+    message TEXT,
+    status VARCHAR(50) DEFAULT 'En attente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
